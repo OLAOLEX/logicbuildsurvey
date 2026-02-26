@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Emotion Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Calibri:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burnt-orange: #ff7d20;
+    --orange-dim: #cc6219;
+    --orange-glow: rgba(255,125,32,0.18);
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --off-white: #f7f5f2;
+    --mid-grey: #888;
+    --light-grey: #d4d0cb;
+    --card-bg: #121212;
+    --border: rgba(255,125,32,0.25);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Calibri', 'Calibri Light', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── ANIMATED BACKGROUND ── */
+  .bg-gradient {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 20% 80%, rgba(255,125,32,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 60% at 80% 20%, rgba(255,125,32,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .screen.hidden { display: none; }
+
+  /* ── WELCOME SCREEN ── */
+  #welcome-screen {
+    text-align: center;
+  }
+  .logo-mark {
+    width: 64px;
+    height: 64px;
+    border: 1.5px solid var(--burnt-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    position: relative;
+    animation: pulse-ring 3s ease infinite;
+  }
+  .logo-mark svg { width: 28px; height: 28px; fill: var(--burnt-orange); }
+  @keyframes pulse-ring {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,125,32,0); }
+    50% { box-shadow: 0 0 0 8px rgba(255,125,32,0.1); }
+  }
+
+  .welcome-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--burnt-orange);
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--burnt-orange);
+  }
+
+  .welcome-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--mid-grey);
+    margin-bottom: 32px;
+  }
+
+  .welcome-desc {
+    max-width: 520px;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: #aaa;
+    margin: 0 auto 12px;
+  }
+
+  .meta-pills {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 24px 0 40px;
+  }
+  .meta-pill {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 300;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-pill span { color: var(--burnt-orange); font-size: 14px; }
+
+  .btn-primary {
+    background: var(--burnt-orange);
+    color: var(--black);
+    border: none;
+    padding: 16px 48px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.35s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(255,125,32,0.35); }
+
+  /* ── FACTOR INTRO SCREEN ── */
+  #factor-intro-screen .factor-intro-inner {
+    text-align: center;
+    max-width: 540px;
+  }
+  .factor-tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--burnt-orange);
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+  .factor-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .factor-weight {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--mid-grey);
+    margin-bottom: 20px;
+  }
+  .factor-desc {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #999;
+    margin-bottom: 36px;
+  }
+  .factor-line {
+    width: 60px;
+    height: 1px;
+    background: var(--burnt-orange);
+    margin: 0 auto 28px;
+  }
+
+  /* ── QUESTION SCREEN ── */
+  #question-screen {
+    padding: 20px 20px 40px;
+    justify-content: flex-start;
+  }
+
+  .q-header {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-top: 12px;
+  }
+
+  .q-progress-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .q-counter {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--mid-grey);
+    white-space: nowrap;
+  }
+  .q-counter strong { color: var(--white); font-weight: 400; }
+  .progress-bar {
+    flex: 1;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--burnt-orange), #ffaa66);
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+
+  /* ── TIMER ── */
+  .timer-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-left: 20px;
+  }
+  .timer-circle {
+    position: relative;
+    width: 52px;
+    height: 52px;
+  }
+  .timer-circle svg {
+    position: absolute;
+    top: 0; left: 0;
+    transform: rotate(-90deg);
+  }
+  .timer-circle svg circle {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .timer-track { stroke: rgba(255,255,255,0.07); }
+  .timer-fill {
+    stroke: var(--burnt-orange);
+    stroke-dasharray: 138;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+  }
+  .timer-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--white);
+    transition: color 0.5s ease;
+  }
+  .timer-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mid-grey);
+    font-weight: 300;
+  }
+
+  /* ── FACTOR BADGE ── */
+  .factor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,125,32,0.08);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--burnt-orange);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .factor-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--burnt-orange);
+    opacity: 0.8;
+  }
+
+  .q-text {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .q-number {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(255,125,32,0.6);
+    margin-bottom: 10px;
+    font-weight: 300;
+  }
+
+  .q-question {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 300;
+    line-height: 1.45;
+    color: var(--white);
+    margin-bottom: 36px;
+  }
+
+  /* ── OPTIONS ── */
+  .options-grid {
+    width: 100%;
+    max-width: 680px;
+    display: grid;
+    gap: 10px;
+  }
+  .options-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .options-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .options-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .options-grid.cols-5 { grid-template-columns: repeat(1, 1fr); }
+
+  @media (min-width: 560px) {
+    .options-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .options-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  .option-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 18px 16px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    text-align: center;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+  }
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,125,32,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .option-btn:hover {
+    border-color: var(--burnt-orange);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255,125,32,0.15);
+  }
+  .option-btn:hover::before { opacity: 1; }
+  .option-btn.selected {
+    background: var(--burnt-orange);
+    border-color: var(--burnt-orange);
+    color: var(--black);
+    font-weight: 700;
+  }
+  .option-btn.selected::before { opacity: 0; }
+
+  /* ── SKIP / TIMEOUT ── */
+  .skip-row {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .btn-skip {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    letter-spacing: 1px;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+  .btn-skip:hover { color: rgba(255,255,255,0.6); }
+
+  /* ── TIMEOUT FLASH ── */
+  @keyframes timeout-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+  .timeout-flash { animation: timeout-flash 0.4s ease 3; }
+
+  /* ── TRANSITION ANIMATION ── */
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide-in { animation: slide-in 0.4s ease forwards; }
+
+  @keyframes slide-out {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+  .slide-out { animation: slide-out 0.3s ease forwards; }
+
+  /* ── RESULTS SCREEN ── */
+  #results-screen { padding: 40px 20px 60px; }
+
+  .results-wrap {
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+  }
+
+  .results-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--burnt-orange);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .archetype-display {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 5vw, 52px);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    color: var(--white);
+  }
+  .archetype-display em {
+    font-style: italic;
+    color: var(--burnt-orange);
+  }
+
+  .archetype-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 0 auto 48px;
+  }
+
+  /* ── SCORE DIALS ── */
+  .score-section {
+    margin-bottom: 48px;
+  }
+  .overall-score-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mid-grey);
+    margin-bottom: 12px;
+    font-weight: 300;
+  }
+  .overall-score-value {
+    font-family: var(--font-display);
+    font-size: clamp(72px, 12vw, 120px);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--white);
+    position: relative;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  .overall-score-value::after {
+    content: '/100';
+    font-size: 28px;
+    color: var(--mid-grey);
+    margin-left: 4px;
+    vertical-align: bottom;
+    line-height: 1.8;
+  }
+
+  /* ── SCORE BAR ── */
+  .score-bar-outer {
+    width: 100%;
+    max-width: 500px;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin: 16px auto 40px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f07020, var(--burnt-orange), #ffaa55);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* ── SUB SCORES ── */
+  .sub-scores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 560px) {
+    .sub-scores { grid-template-columns: 1fr; }
+  }
+  .sub-score-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    padding: 24px 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .sub-score-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--burnt-orange);
+    transform: scaleX(0);
+    transition: transform 1s ease;
+    transform-origin: left;
+  }
+  .sub-score-card.animate::before { transform: scaleX(1); }
+
+  .sub-score-name {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mid-grey);
+    margin-bottom: 8px;
+    font-weight: 300;
+  }
+  .sub-score-role {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(255,125,32,0.7);
+    margin-bottom: 14px;
+  }
+  .sub-score-val {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .sub-score-bar {
+    width: 80%;
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    margin: 0 auto;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .sub-score-fill {
+    height: 100%;
+    background: var(--burnt-orange);
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* ── ARCHETYPE BANDS TABLE ── */
+  .archetype-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+  .archetype-table th {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mid-grey);
+    font-weight: 300;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .archetype-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 300;
+    color: #bbb;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    line-height: 1.5;
+  }
+  .archetype-table tr.current td {
+    color: var(--white);
+    background: rgba(255,125,32,0.07);
+    border-left: 2px solid var(--burnt-orange);
+  }
+  .archetype-table tr.current td:first-child { padding-left: 12px; }
+
+  /* ── RESTART ── */
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .btn-secondary {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 12px 32px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: rgba(255,125,32,0.4);
+    margin: 36px auto;
+  }
+
+  /* ── COUNTDOWN OVERLAY ── */
+  #countdown-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  #countdown-overlay.hidden { display: none; }
+  .countdown-number {
+    font-family: var(--font-display);
+    font-size: 140px;
+    font-weight: 300;
+    color: var(--white);
+    animation: count-pop 0.9s ease infinite;
+  }
+  @keyframes count-pop {
+    0% { transform: scale(0.8); opacity: 0.3; }
+    30% { transform: scale(1); opacity: 1; }
+    70% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.15); opacity: 0; }
+  }
+
+  /* ── FACTOR TRANSITION OVERLAY ── */
+  #factor-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  #factor-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .factor-overlay-inner {
+    text-align: center;
+  }
+  .factor-overlay-tag {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--burnt-orange);
+    margin-bottom: 12px;
+    font-weight: 300;
+  }
+  .factor-overlay-name {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  /* ── LOADING/CALCULATING ── */
+  #loading-screen {
+    text-align: center;
+  }
+  .calc-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--burnt-orange);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+  .calc-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 300;
+    margin-bottom: 40px;
+    color: var(--white);
+  }
+  .calc-dots {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .calc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--burnt-orange);
+    animation: dot-bounce 1.4s ease infinite;
+  }
+  .calc-dot:nth-child(2) { animation-delay: 0.2s; }
+  .calc-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+    40% { transform: translateY(-12px); opacity: 1; }
+  }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+</style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+
+<!-- COUNTDOWN OVERLAY (3,2,1) -->
+<div id="countdown-overlay" class="hidden" aria-live="assertive">
+  <div class="countdown-number" id="countdown-num">3</div>
+</div>
+
+<!-- FACTOR TRANSITION OVERLAY -->
+<div id="factor-overlay">
+  <div class="factor-overlay-inner">
+    <div class="factor-overlay-tag">Next Section</div>
+    <div class="factor-overlay-name" id="factor-overlay-name"></div>
+  </div>
+</div>
+
+<!-- SCREEN 1: WELCOME -->
+<div id="welcome-screen" class="screen">
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+  </div>
+  <div class="welcome-label">Psychometric Financial Assessment</div>
+  <h1>Financial<br><em>Emotion Index</em></h1>
+  <div class="welcome-subtitle">A reflective journey into your relationship with money</div>
+  <p class="welcome-desc">This assessment explores how your background, social environment, and media exposure shape your feelings about saving and spending. There are no right or wrong answers — only your truth.</p>
+  <div class="meta-pills">
+    <div class="meta-pill"><span>⏱</span> 10–15 minutes</div>
+    <div class="meta-pill"><span>❓</span> 30 questions</div>
+    <div class="meta-pill"><span>🔒</span> Completely confidential</div>
+  </div>
+  <button class="btn-primary" onclick="startCountdown()">Begin Your Journey</button>
+</div>
+
+<!-- SCREEN 2: QUESTION -->
+<div id="question-screen" class="screen hidden">
+  <div class="q-header">
+    <div class="q-progress-wrap">
+      <div class="q-counter">Question <strong id="q-num">1</strong> of 30</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-circle" role="timer" aria-label="Time remaining">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle class="timer-track" cx="26" cy="26" r="22"/>
+          <circle class="timer-fill" id="timer-fill" cx="26" cy="26" r="22"/>
+        </svg>
+        <div class="timer-number" id="timer-num">20</div>
+      </div>
+      <div class="timer-label">seconds</div>
+    </div>
+  </div>
+
+  <div class="q-text slide-in" id="q-content">
+    <div class="factor-badge" id="factor-badge">Background</div>
+    <div class="q-number" id="q-number-label">Question 01</div>
+    <div class="q-question" id="q-question">Question text here</div>
+    <div class="options-grid" id="options-grid"></div>
+    <div class="skip-row">
+      <button class="btn-skip" onclick="skipQuestion()">Skip question →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: CALCULATING -->
+<div id="loading-screen" class="screen hidden">
+  <div class="calc-label">Processing your responses</div>
+  <div class="calc-title">Mapping your<br><em style="font-family:var(--font-display);font-style:italic;color:var(--burnt-orange)">financial emotions</em></div>
+  <div class="calc-dots">
+    <div class="calc-dot"></div>
+    <div class="calc-dot"></div>
+    <div class="calc-dot"></div>
+  </div>
+</div>
+
+<!-- SCREEN 4: RESULTS -->
+<div id="results-screen" class="screen hidden">
+  <div class="results-wrap slide-in">
+    <div class="results-eyebrow">Your Financial Emotion Index</div>
+    <div class="archetype-display" id="archetype-name">Security-Anchored Saver</div>
+    <p class="archetype-desc" id="archetype-desc">Safety and predictability drive most of your financial decisions.</p>
+
+    <div class="score-section">
+      <div class="overall-score-label">Overall Score</div>
+      <div class="overall-score-value" id="overall-score">0</div>
+      <div class="score-bar-outer">
+        <div class="score-bar-fill" id="overall-bar"></div>
+      </div>
+    </div>
+
+    <div class="sub-scores" id="sub-scores-grid">
+      <div class="sub-score-card" id="card-background">
+        <div class="sub-score-name">Background</div>
+        <div class="sub-score-role">The Anchor</div>
+        <div class="sub-score-val" id="bg-score">—</div>
+        <div class="sub-score-bar"><div class="sub-score-fill" id="bg-bar"></div></div>
+      </div>
+      <div class="sub-score-card" id="card-social">
+        <div class="sub-score-name">Social Cues</div>
+        <div class="sub-score-role">The Pulse</div>
+        <div class="sub-score-val" id="sc-score">—</div>
+        <div class="sub-score-bar"><div class="sub-score-fill" id="sc-bar"></div></div>
+      </div>
+      <div class="sub-score-card" id="card-media">
+        <div class="sub-score-name">Media</div>
+        <div class="sub-score-role">The Noise</div>
+        <div class="sub-score-val" id="md-score">—</div>
+        <div class="sub-score-bar"><div class="sub-score-fill" id="md-bar"></div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="margin-bottom:20px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--mid-grey);font-weight:300;">Emotional Orientation Spectrum</div>
+    <table class="archetype-table" id="archetype-table">
+      <thead>
+        <tr>
+          <th>Range</th>
+          <th>Orientation</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="results-actions">
+      <button class="btn-primary" onclick="restartAssessment()">Retake Assessment</button>
+      <button class="btn-secondary" onclick="window.print()">Print Results</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA: 30 Questions with options & scores
+// ─────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    id: 1, factor: 'Media',
+    text: 'Which news headline would move you more emotionally?',
+    options: [{label:'Market Crash', score:1},{label:'Bull Market', score:2}]
+  },
+  {
+    id: 2, factor: 'Social Cues',
+    text: 'How do you feel when splitting the bill to match others at a restaurant?',
+    options: [{label:'Discomfort', score:1},{label:'Irritation', score:2},{label:'Relief', score:3},{label:'Ease', score:4}]
+  },
+  {
+    id: 3, factor: 'Media',
+    text: 'Shows like Geordie Shore, The Royle Family, Coronation Street, or Only Fools and Horses often portray working-class life with humour and grit. Which emotional response best describes how you relate to those portrayals?',
+    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
+  },
+  {
+    id: 4, factor: 'Social Cues',
+    text: 'What goes through your mind when someone hangs back during a drinks round?',
+    options: [{label:'Judgement', score:1},{label:'Suspicion', score:2},{label:'Recognition', score:3},{label:'Empathy', score:4}]
+  },
+  {
+    id: 5, factor: 'Background',
+    text: 'How did your first paid job shape your sense of what your time and effort were worth?',
+    options: [{label:'Glad', score:1},{label:'Content', score:2},{label:'Weary', score:3},{label:'Shame', score:4},{label:'Envy', score:5}]
+  },
+  {
+    id: 6, factor: 'Background',
+    text: 'What did Christmas feel like financially in your home?',
+    options: [{label:'Pressure', score:1},{label:'Stress', score:2},{label:'Comparison', score:3},{label:'Magic', score:4},{label:'Abundance', score:5}]
+  },
+  {
+    id: 7, factor: 'Media',
+    text: 'When you watched Location, Location, Location, did you ever feel that owning a home was a test of adulthood?',
+    options: [{label:'No', score:1},{label:'Yes', score:2}]
+  },
+  {
+    id: 8, factor: 'Social Cues',
+    text: 'How did you feel giving a noticeably cheap birthday present?',
+    options: [{label:'Relief', score:1},{label:'Self‑Consciousness', score:2},{label:'Guilt', score:3},{label:'Embarrassment', score:4}]
+  },
+  {
+    id: 9, factor: 'Background',
+    text: 'How did your future earning potential influence your choice of GCSE subjects?',
+    options: [{label:'Never', score:1},{label:'Annually', score:2},{label:'Quarterly', score:3},{label:'Monthly', score:4},{label:'Weekly', score:5}]
+  },
+  {
+    id: 10, factor: 'Media',
+    text: 'When you saw the luxury lifestyle in Hello! magazine, what emotion surfaced first?',
+    options: [{label:'Curiosity', score:1},{label:'Admiration', score:2},{label:'Envy', score:3},{label:'Inadequate', score:4}]
+  },
+  {
+    id: 11, factor: 'Social Cues',
+    text: 'How did comparing neighbours\' cars, holidays, weddings, or pets shape your expectations of a "normal" life?',
+    options: [{label:'Anxious', score:1},{label:'Cautious', score:2},{label:'Justified', score:3},{label:'Excited', score:4}]
+  },
+  {
+    id: 12, factor: 'Background',
+    text: 'Growing up, did you feel your family lived in scarcity or abundance?',
+    options: [{label:'Scarcity', score:1},{label:'Abundance', score:2}]
+  },
+  {
+    id: 13, factor: 'Media',
+    text: 'How often do you feel you\'re "missing out" financially compared to others you see online or on TV?',
+    options: [{label:'Never', score:1},{label:'Annually', score:2},{label:'Quarterly', score:3},{label:'Monthly', score:4},{label:'Weekly', score:5}]
+  },
+  {
+    id: 14, factor: 'Background',
+    text: 'Looking back at moments like lunchbox envy or noticing who had hot school dinners — how much did those experiences shape your sense of fairness or status?',
+    options: [{label:'Lots', score:1},{label:'So so', score:2},{label:'Very little', score:3}]
+  },
+  {
+    id: 15, factor: 'Social Cues',
+    text: 'What emotions come up when colleagues organise yet another gift collection?',
+    options: [{label:'Overkill', score:1},{label:'Resentment', score:2},{label:'Belonging', score:3},{label:'Obligation', score:4},{label:'Generosity', score:5}]
+  },
+  {
+    id: 16, factor: 'Media',
+    text: 'When you encountered rags-to-riches stories (like Annie or Alan Sugar), did they give you hope or feel unrealistic?',
+    options: [{label:'Hope', score:1},{label:'Unrealistic', score:2}]
+  },
+  {
+    id: 17, factor: 'Background',
+    text: 'How did your cultural or religious background shape your beliefs about saving, giving, debt, or wealth?',
+    options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
+  },
+  {
+    id: 18, factor: 'Social Cues',
+    text: 'Would you worry about your child being socially excluded because "all her friends have it"?',
+    options: [{label:'Yes', score:1},{label:'No', score:2}]
+  },
+  {
+    id: 19, factor: 'Background',
+    text: 'Were there any financial shocks in your childhood that still influence how you react to money today?',
+    options: [{label:'Yes', score:1},{label:'No', score:2}]
+  },
+  {
+    id: 20, factor: 'Background',
+    text: 'Did you ever feel fear or shame about your family\'s financial situation, even if no one talked about it?',
+    options: [{label:'Repulsed', score:1},{label:'Cautious', score:2},{label:'Resigned', score:3},{label:'Attracted', score:4}]
+  },
+  {
+    id: 21, factor: 'Media',
+    text: 'Watching Dallas or Succession, did the portrayal of wealth feel exciting, corrupting, unrealistic, or strangely familiar?',
+    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
+  },
+  {
+    id: 22, factor: 'Social Cues',
+    text: 'Have you regretted asking the amount a friend or colleague gets paid — what emotion hit you first?',
+    options: [{label:'Resignation', score:1},{label:'Caution', score:2},{label:'Guilt', score:3},{label:'Anxiety', score:4},{label:'Rebellion', score:5}]
+  },
+  {
+    id: 23, factor: 'Media',
+    text: 'Does Location, Location, Location validate Kirstie and Phil as financial advisers?',
+    options: [{label:'Yes', score:1},{label:'No', score:2}]
+  },
+  {
+    id: 24, factor: 'Social Cues',
+    text: 'Have you ever felt financially dependent on a partner — and what emotions did that dependence create?',
+    options: [{label:'Helpless', score:1},{label:'Sadness', score:2},{label:'Guilt', score:3},{label:'Motivated to Act', score:4}]
+  },
+  {
+    id: 25, factor: 'Media',
+    text: 'Images of an Ethiopian child designed to provoke emotion — did you feel guilt, sadness, helplessness, or something else?',
+    options: [{label:'Helpless', score:1},{label:'Sadness', score:2},{label:'Guilt', score:3},{label:'Motivated to Act', score:4}]
+  },
+  {
+    id: 26, factor: 'Social Cues',
+    text: 'If you\'ve heard "I pay the bills, so I do what I want," how did that shape your understanding of power or partnership?',
+    options: [{label:'Anxious', score:1},{label:'Cautious', score:2},{label:'Justified', score:3},{label:'Excited', score:4}]
+  },
+  {
+    id: 27, factor: 'Media',
+    text: 'Did charity events like Children in Need or Red Nose Day make you feel empowered to help, or overwhelmed?',
+    options: [{label:'Empowered', score:1},{label:'Overwhelmed', score:2}]
+  },
+  {
+    id: 28, factor: 'Social Cues',
+    text: 'Did you ever feel that your family\'s spending, generosity, or lifestyle affected your family\'s honour or respect in the community?',
+    options: [{label:'Lowered', score:1},{label:'Average', score:2},{label:'Elevated', score:3}]
+  },
+  {
+    id: 29, factor: 'Social Cues',
+    text: 'When you heard phrases like "money doesn\'t grow on trees," what emotions did those words create in you as a child?',
+    options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
+  },
+  {
+    id: 30, factor: 'Background',
+    text: 'When you think about your piggy bank as a child, what emotions come up?',
+    options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
+  }
+];
+
+const ARCHETYPES = [
+  { min:0, max:20, name:'Security-Anchored Saver', desc:'Safety and predictability drive most of your financial decisions. Stability is your foundation.' },
+  { min:21, max:40, name:'Cautious Stabiliser', desc:'You prefer security but allow yourself selective indulgences. Comfort matters, but caution leads.' },
+  { min:41, max:60, name:'Emotionally Split', desc:'You sit at the crossroads of safety and enjoyment — pulled in both directions with equal force.' },
+  { min:61, max:80, name:'Aspirational Spender', desc:'You seek identity and experiences through spending. Life feels fuller when shared and expressed.' },
+  { min:81, max:100, name:'Emotion-Driven Spender', desc:'Your spending is strongly tied to emotion, status, or relief. Feelings guide your financial flow.' }
+];
+
+const WEIGHTS = { 'Background': 0.50, 'Social Cues': 0.30, 'Media': 0.20 };
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let currentQ = 0;
+let answers = {}; // { questionId: score }
+let timerInterval = null;
+let timeLeft = 20;
+const TIMER_MAX = 20;
+const CIRCUMFERENCE = 2 * Math.PI * 22; // r=22
+
+// ─────────────────────────────────────────────
+// FLOW
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function startCountdown() {
+  const overlay = document.getElementById('countdown-overlay');
+  const num = document.getElementById('countdown-num');
+  overlay.classList.remove('hidden');
+  let c = 3;
+  num.textContent = c;
+  const interval = setInterval(() => {
+    c--;
+    if (c === 0) {
+      clearInterval(interval);
+      overlay.classList.add('hidden');
+      currentQ = 0;
+      showScreen('question-screen');
+      renderQuestion(currentQ);
+    } else {
+      num.textContent = c;
+    }
+  }, 900);
+}
+
+function renderQuestion(index) {
+  const q = QUESTIONS[index];
+  const content = document.getElementById('q-content');
+  content.classList.remove('slide-in');
+  void content.offsetWidth;
+  content.classList.add('slide-in');
+
+  document.getElementById('q-num').textContent = index + 1;
+  document.getElementById('progress-fill').style.width = ((index / 30) * 100) + '%';
+  document.getElementById('factor-badge').textContent = q.factor;
+  document.getElementById('q-number-label').textContent = `Question ${String(index+1).padStart(2,'0')}`;
+  document.getElementById('q-question').textContent = q.text;
+
+  const grid = document.getElementById('options-grid');
+  const n = q.options.length;
+  grid.className = 'options-grid cols-' + n;
+  grid.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt.label;
+    btn.setAttribute('aria-label', opt.label);
+    btn.onclick = () => selectOption(q.id, opt.score, btn);
+    grid.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function selectOption(qId, score, btn) {
+  // Highlight selection
+  document.querySelectorAll('#options-grid .option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[qId] = score;
+
+  // Brief pause then advance
+  setTimeout(() => advanceQuestion(), 380);
+}
+
+function skipQuestion() {
+  advanceQuestion();
+}
+
+function advanceQuestion() {
+  stopTimer();
+  currentQ++;
+  if (currentQ >= QUESTIONS.length) {
+    showLoading();
+  } else {
+    // Check if we're entering a new factor section
+    const prevFactor = currentQ > 0 ? QUESTIONS[currentQ - 1].factor : null;
+    const nextFactor = QUESTIONS[currentQ].factor;
+    if (prevFactor && prevFactor !== nextFactor) {
+      showFactorTransition(nextFactor, () => renderQuestion(currentQ));
+    } else {
+      renderQuestion(currentQ);
+    }
+  }
+}
+
+function showFactorTransition(factorName, cb) {
+  const overlay = document.getElementById('factor-overlay');
+  document.getElementById('factor-overlay-name').textContent = factorName;
+  overlay.classList.add('visible');
+  setTimeout(() => {
+    overlay.classList.remove('visible');
+    setTimeout(cb, 500);
+  }, 1800);
+}
+
+function showLoading() {
+  showScreen('loading-screen');
+  setTimeout(() => {
+    calcAndShowResults();
+  }, 2200);
+}
+
+// ─────────────────────────────────────────────
+// TIMER
+// ─────────────────────────────────────────────
+function startTimer() {
+  timeLeft = TIMER_MAX;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      stopTimer();
+      // Flash the timer red
+      document.getElementById('timer-num').parentElement.classList.add('timeout-flash');
+      setTimeout(() => {
+        document.getElementById('timer-num').parentElement.classList.remove('timeout-flash');
+        advanceQuestion();
+      }, 1200);
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function updateTimerDisplay() {
+  const numEl = document.getElementById('timer-num');
+  const fillEl = document.getElementById('timer-fill');
+  numEl.textContent = timeLeft;
+
+  const fraction = timeLeft / TIMER_MAX;
+  const offset = CIRCUMFERENCE * (1 - fraction);
+  fillEl.style.strokeDashoffset = offset;
+
+  // Color changes as time runs out
+  if (timeLeft <= 5) {
+    fillEl.style.stroke = '#ff3a3a';
+    numEl.style.color = '#ff3a3a';
+  } else if (timeLeft <= 10) {
+    fillEl.style.stroke = '#ffaa20';
+    numEl.style.color = '#ffaa20';
+  } else {
+    fillEl.style.stroke = 'var(--burnt-orange)';
+    numEl.style.color = 'var(--white)';
+  }
+}
+
+// ─────────────────────────────────────────────
+// SCORING
+// ─────────────────────────────────────────────
+function calcAndShowResults() {
+  // Group questions by factor
+  const factors = { 'Background': [], 'Social Cues': [], 'Media': [] };
+  QUESTIONS.forEach(q => factors[q.factor].push(q));
+
+  const factorScores = {};
+  Object.keys(factors).forEach(factor => {
+    const qs = factors[factor];
+    let sum = 0;
+    let count = 0;
+    qs.forEach(q => {
+      const raw = answers[q.id];
+      if (raw !== undefined) {
+        const ki = q.options.length;
+        const normalised = (raw - 1) / (ki - 1); // 0–1
+        sum += normalised;
+        count++;
+      }
+    });
+    // Factor score 0–100 (use all answered questions)
+    factorScores[factor] = count > 0 ? (sum / count) * 100 : 50;
+  });
+
+  const overall = Math.round(
+    factorScores['Background'] * WEIGHTS['Background'] +
+    factorScores['Social Cues'] * WEIGHTS['Social Cues'] +
+    factorScores['Media'] * WEIGHTS['Media']
+  );
+
+  const archetype = ARCHETYPES.find(a => overall >= a.min && overall <= a.max) || ARCHETYPES[2];
+
+  showResults(overall, factorScores, archetype);
+}
+
+function showResults(overall, factorScores, archetype) {
+  showScreen('results-screen');
+
+  // Animate archetype name
+  document.getElementById('archetype-name').innerHTML = archetype.name.replace(/(\w+-\w+|\w+ \w+)$/, '<em>$&</em>');
+  document.getElementById('archetype-desc').textContent = archetype.desc;
+
+  // Animate overall score
+  animateCounter('overall-score', 0, overall, 1400);
+  setTimeout(() => {
+    document.getElementById('overall-bar').style.width = overall + '%';
+  }, 300);
+
+  // Sub scores
+  const bgScore = Math.round(factorScores['Background']);
+  const scScore = Math.round(factorScores['Social Cues']);
+  const mdScore = Math.round(factorScores['Media']);
+
+  setTimeout(() => {
+    animateCounter('bg-score', 0, bgScore, 1200);
+    animateCounter('sc-score', 0, scScore, 1200);
+    animateCounter('md-score', 0, mdScore, 1200);
+    document.getElementById('bg-bar').style.width = bgScore + '%';
+    document.getElementById('sc-bar').style.width = scScore + '%';
+    document.getElementById('md-bar').style.width = mdScore + '%';
+    document.getElementById('card-background').classList.add('animate');
+    document.getElementById('card-social').classList.add('animate');
+    document.getElementById('card-media').classList.add('animate');
+  }, 500);
+
+  // Archetype table
+  const tbody = document.querySelector('#archetype-table tbody');
+  tbody.innerHTML = '';
+  ARCHETYPES.forEach(a => {
+    const tr = document.createElement('tr');
+    if (overall >= a.min && overall <= a.max) tr.className = 'current';
+    tr.innerHTML = `<td>${a.min}–${a.max}</td><td>${a.name}</td><td>${a.desc}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function animateCounter(id, from, to, duration) {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * ease);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function restartAssessment() {
+  currentQ = 0;
+  answers = {};
+  startCountdown();
+}
+</script>
+</body>
+</html>
