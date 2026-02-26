@@ -460,6 +460,7 @@
     width: 100%;
     max-width: 720px;
     text-align: center;
+    contain: layout style;
   }
 
   .results-eyebrow {
@@ -473,7 +474,7 @@
 
   .archetype-display {
     font-family: var(--font-display);
-    font-size: clamp(30px, 5vw, 52px);
+    font-size: 44px;
     font-weight: 300;
     line-height: 1.15;
     margin-bottom: 10px;
@@ -496,6 +497,7 @@
   /* ── SCORE DIALS ── */
   .score-section {
     margin-bottom: 48px;
+    min-height: 200px;
   }
   .overall-score-label {
     font-size: 11px;
@@ -507,21 +509,23 @@
   }
   .overall-score-value {
     font-family: var(--font-display);
-    font-size: clamp(72px, 12vw, 120px);
+    font-size: 100px;
     font-weight: 300;
     line-height: 1;
     color: var(--white);
     position: relative;
     display: inline-block;
     margin-bottom: 4px;
+    min-height: 120px;
   }
   .overall-score-value::after {
     content: '/100';
     font-size: 28px;
     color: var(--mid-grey);
     margin-left: 4px;
-    vertical-align: bottom;
+    vertical-align: baseline;
     line-height: 1.8;
+    display: inline-block;
   }
 
   /* ── SCORE BAR ── */
@@ -540,6 +544,7 @@
     border-radius: 2px;
     width: 0%;
     transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: width;
   }
 
   /* ── SUB SCORES ── */
@@ -561,6 +566,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    contain: layout style paint;
   }
   .sub-score-card::before {
     content: '';
@@ -610,6 +616,7 @@
     background: var(--burnt-orange);
     width: 0%;
     transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: width;
   }
 
   /* ── ARCHETYPE BANDS TABLE ── */
@@ -731,7 +738,7 @@
   }
   .factor-overlay-name {
     font-family: var(--font-display);
-    font-size: clamp(40px, 8vw, 80px);
+    font-size: 60px;
     font-weight: 300;
     color: var(--white);
     line-height: 1;
@@ -751,7 +758,7 @@
   }
   .calc-title {
     font-family: var(--font-display);
-    font-size: clamp(28px, 5vw, 48px);
+    font-size: 40px;
     font-weight: 300;
     margin-bottom: 40px;
     color: var(--white);
