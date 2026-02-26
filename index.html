@@ -925,26 +925,7 @@
 // DATA: 30 Questions with options & scores
 // ─────────────────────────────────────────────
 const QUESTIONS = [
-  {
-    id: 1, factor: 'Media',
-    text: 'Which news headline would move you more emotionally?',
-    options: [{label:'Market Crash', score:1},{label:'Bull Market', score:2}]
-  },
-  {
-    id: 2, factor: 'Social Cues',
-    text: 'How do you feel when splitting the bill to match others at a restaurant?',
-    options: [{label:'Discomfort', score:1},{label:'Irritation', score:2},{label:'Relief', score:3},{label:'Ease', score:4}]
-  },
-  {
-    id: 3, factor: 'Media',
-    text: 'Shows like Geordie Shore, The Royle Family, Coronation Street, or Only Fools and Horses often portray working-class life with humour and grit. Which emotional response best describes how you relate to those portrayals?',
-    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
-  },
-  {
-    id: 4, factor: 'Social Cues',
-    text: 'What goes through your mind when someone hangs back during a drinks round?',
-    options: [{label:'Judgement', score:1},{label:'Suspicion', score:2},{label:'Recognition', score:3},{label:'Empathy', score:4}]
-  },
+  // ──── SECTION 1: BACKGROUND (Questions 1-10) ────
   {
     id: 5, factor: 'Background',
     text: 'How did your first paid job shape your sense of what your time and effort were worth?',
@@ -956,29 +937,9 @@ const QUESTIONS = [
     options: [{label:'Pressure', score:1},{label:'Stress', score:2},{label:'Comparison', score:3},{label:'Magic', score:4},{label:'Abundance', score:5}]
   },
   {
-    id: 7, factor: 'Media',
-    text: 'When you watched Location, Location, Location, did you ever feel that owning a home was a test of adulthood?',
-    options: [{label:'No', score:1},{label:'Yes', score:2}]
-  },
-  {
-    id: 8, factor: 'Social Cues',
-    text: 'How did you feel giving a noticeably cheap birthday present?',
-    options: [{label:'Relief', score:1},{label:'Self‑Consciousness', score:2},{label:'Guilt', score:3},{label:'Embarrassment', score:4}]
-  },
-  {
     id: 9, factor: 'Background',
     text: 'How did your future earning potential influence your choice of GCSE subjects?',
     options: [{label:'Never', score:1},{label:'Annually', score:2},{label:'Quarterly', score:3},{label:'Monthly', score:4},{label:'Weekly', score:5}]
-  },
-  {
-    id: 10, factor: 'Media',
-    text: 'When you saw the luxury lifestyle in Hello! magazine, what emotion surfaced first?',
-    options: [{label:'Curiosity', score:1},{label:'Admiration', score:2},{label:'Envy', score:3},{label:'Inadequate', score:4}]
-  },
-  {
-    id: 11, factor: 'Social Cues',
-    text: 'How did comparing neighbours\' cars, holidays, weddings, or pets shape your expectations of a "normal" life?',
-    options: [{label:'Anxious', score:1},{label:'Cautious', score:2},{label:'Justified', score:3},{label:'Excited', score:4}]
   },
   {
     id: 12, factor: 'Background',
@@ -986,34 +947,14 @@ const QUESTIONS = [
     options: [{label:'Scarcity', score:1},{label:'Abundance', score:2}]
   },
   {
-    id: 13, factor: 'Media',
-    text: 'How often do you feel you\'re "missing out" financially compared to others you see online or on TV?',
-    options: [{label:'Never', score:1},{label:'Annually', score:2},{label:'Quarterly', score:3},{label:'Monthly', score:4},{label:'Weekly', score:5}]
-  },
-  {
     id: 14, factor: 'Background',
     text: 'Looking back at moments like lunchbox envy or noticing who had hot school dinners — how much did those experiences shape your sense of fairness or status?',
     options: [{label:'Lots', score:1},{label:'So so', score:2},{label:'Very little', score:3}]
   },
   {
-    id: 15, factor: 'Social Cues',
-    text: 'What emotions come up when colleagues organise yet another gift collection?',
-    options: [{label:'Overkill', score:1},{label:'Resentment', score:2},{label:'Belonging', score:3},{label:'Obligation', score:4},{label:'Generosity', score:5}]
-  },
-  {
-    id: 16, factor: 'Media',
-    text: 'When you encountered rags-to-riches stories (like Annie or Alan Sugar), did they give you hope or feel unrealistic?',
-    options: [{label:'Hope', score:1},{label:'Unrealistic', score:2}]
-  },
-  {
     id: 17, factor: 'Background',
     text: 'How did your cultural or religious background shape your beliefs about saving, giving, debt, or wealth?',
     options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
-  },
-  {
-    id: 18, factor: 'Social Cues',
-    text: 'Would you worry about your child being socially excluded because "all her friends have it"?',
-    options: [{label:'Yes', score:1},{label:'No', score:2}]
   },
   {
     id: 19, factor: 'Background',
@@ -1026,9 +967,40 @@ const QUESTIONS = [
     options: [{label:'Repulsed', score:1},{label:'Cautious', score:2},{label:'Resigned', score:3},{label:'Attracted', score:4}]
   },
   {
-    id: 21, factor: 'Media',
-    text: 'Watching Dallas or Succession, did the portrayal of wealth feel exciting, corrupting, unrealistic, or strangely familiar?',
-    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
+    id: 30, factor: 'Background',
+    text: 'When you think about your piggy bank as a child, what emotions come up?',
+    options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
+  },
+  // ──── SECTION 2: SOCIAL CUES (Questions 11-20) ────
+  {
+    id: 2, factor: 'Social Cues',
+    text: 'How do you feel when splitting the bill to match others at a restaurant?',
+    options: [{label:'Discomfort', score:1},{label:'Irritation', score:2},{label:'Relief', score:3},{label:'Ease', score:4}]
+  },
+  {
+    id: 4, factor: 'Social Cues',
+    text: 'What goes through your mind when someone hangs back during a drinks round?',
+    options: [{label:'Judgement', score:1},{label:'Suspicion', score:2},{label:'Recognition', score:3},{label:'Empathy', score:4}]
+  },
+  {
+    id: 8, factor: 'Social Cues',
+    text: 'How did you feel giving a noticeably cheap birthday present?',
+    options: [{label:'Relief', score:1},{label:'Self‑Consciousness', score:2},{label:'Guilt', score:3},{label:'Embarrassment', score:4}]
+  },
+  {
+    id: 11, factor: 'Social Cues',
+    text: 'How did comparing neighbours\' cars, holidays, weddings, or pets shape your expectations of a "normal" life?',
+    options: [{label:'Anxious', score:1},{label:'Cautious', score:2},{label:'Justified', score:3},{label:'Excited', score:4}]
+  },
+  {
+    id: 15, factor: 'Social Cues',
+    text: 'What emotions come up when colleagues organise yet another gift collection?',
+    options: [{label:'Overkill', score:1},{label:'Resentment', score:2},{label:'Belonging', score:3},{label:'Obligation', score:4},{label:'Generosity', score:5}]
+  },
+  {
+    id: 18, factor: 'Social Cues',
+    text: 'Would you worry about your child being socially excluded because "all her friends have it"?',
+    options: [{label:'Yes', score:1},{label:'No', score:2}]
   },
   {
     id: 22, factor: 'Social Cues',
@@ -1036,29 +1008,14 @@ const QUESTIONS = [
     options: [{label:'Resignation', score:1},{label:'Caution', score:2},{label:'Guilt', score:3},{label:'Anxiety', score:4},{label:'Rebellion', score:5}]
   },
   {
-    id: 23, factor: 'Media',
-    text: 'Does Location, Location, Location validate Kirstie and Phil as financial advisers?',
-    options: [{label:'Yes', score:1},{label:'No', score:2}]
-  },
-  {
     id: 24, factor: 'Social Cues',
     text: 'Have you ever felt financially dependent on a partner — and what emotions did that dependence create?',
-    options: [{label:'Helpless', score:1},{label:'Sadness', score:2},{label:'Guilt', score:3},{label:'Motivated to Act', score:4}]
-  },
-  {
-    id: 25, factor: 'Media',
-    text: 'Images of an Ethiopian child designed to provoke emotion — did you feel guilt, sadness, helplessness, or something else?',
     options: [{label:'Helpless', score:1},{label:'Sadness', score:2},{label:'Guilt', score:3},{label:'Motivated to Act', score:4}]
   },
   {
     id: 26, factor: 'Social Cues',
     text: 'If you\'ve heard "I pay the bills, so I do what I want," how did that shape your understanding of power or partnership?',
     options: [{label:'Anxious', score:1},{label:'Cautious', score:2},{label:'Justified', score:3},{label:'Excited', score:4}]
-  },
-  {
-    id: 27, factor: 'Media',
-    text: 'Did charity events like Children in Need or Red Nose Day make you feel empowered to help, or overwhelmed?',
-    options: [{label:'Empowered', score:1},{label:'Overwhelmed', score:2}]
   },
   {
     id: 28, factor: 'Social Cues',
@@ -1070,10 +1027,56 @@ const QUESTIONS = [
     text: 'When you heard phrases like "money doesn\'t grow on trees," what emotions did those words create in you as a child?',
     options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
   },
+  // ──── SECTION 3: MEDIA (Questions 21-30) ────
   {
-    id: 30, factor: 'Background',
-    text: 'When you think about your piggy bank as a child, what emotions come up?',
-    options: [{label:'Shame', score:1},{label:'Pride', score:2},{label:'Frustration', score:3},{label:'Excitement', score:4}]
+    id: 1, factor: 'Media',
+    text: 'Which news headline would move you more emotionally?',
+    options: [{label:'Market Crash', score:1},{label:'Bull Market', score:2}]
+  },
+  {
+    id: 3, factor: 'Media',
+    text: 'Shows like Geordie Shore, The Royle Family, Coronation Street, or Only Fools and Horses often portray working-class life with humour and grit. Which emotional response best describes how you relate to those portrayals?',
+    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
+  },
+  {
+    id: 7, factor: 'Media',
+    text: 'When you watched Location, Location, Location, did you ever feel that owning a home was a test of adulthood?',
+    options: [{label:'No', score:1},{label:'Yes', score:2}]
+  },
+  {
+    id: 10, factor: 'Media',
+    text: 'When you saw the luxury lifestyle in Hello! magazine, what emotion surfaced first?',
+    options: [{label:'Curiosity', score:1},{label:'Admiration', score:2},{label:'Envy', score:3},{label:'Inadequate', score:4}]
+  },
+  {
+    id: 13, factor: 'Media',
+    text: 'How often do you feel you\'re "missing out" financially compared to others you see online or on TV?',
+    options: [{label:'Never', score:1},{label:'Annually', score:2},{label:'Quarterly', score:3},{label:'Monthly', score:4},{label:'Weekly', score:5}]
+  },
+  {
+    id: 16, factor: 'Media',
+    text: 'When you encountered rags-to-riches stories (like Annie or Alan Sugar), did they give you hope or feel unrealistic?',
+    options: [{label:'Hope', score:1},{label:'Unrealistic', score:2}]
+  },
+  {
+    id: 21, factor: 'Media',
+    text: 'Watching Dallas or Succession, did the portrayal of wealth feel exciting, corrupting, unrealistic, or strangely familiar?',
+    options: [{label:'Gloomy', score:1},{label:'Dreary', score:2},{label:'Glamourous', score:3},{label:'Dreamy', score:4}]
+  },
+  {
+    id: 23, factor: 'Media',
+    text: 'Does Location, Location, Location validate Kirstie and Phil as financial advisers?',
+    options: [{label:'Yes', score:1},{label:'No', score:2}]
+  },
+  {
+    id: 25, factor: 'Media',
+    text: 'Images of an Ethiopian child designed to provoke emotion — did you feel guilt, sadness, helplessness, or something else?',
+    options: [{label:'Helpless', score:1},{label:'Sadness', score:2},{label:'Guilt', score:3},{label:'Motivated to Act', score:4}]
+  },
+  {
+    id: 27, factor: 'Media',
+    text: 'Did charity events like Children in Need or Red Nose Day make you feel empowered to help, or overwhelmed?',
+    options: [{label:'Empowered', score:1},{label:'Overwhelmed', score:2}]
   }
 ];
 
