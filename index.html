@@ -14,524 +14,166 @@
   --dark: #1a1410;
   --dark-mid: #2d2218;
   --text: #3d2e1e;
-  --text-soft: #7a6555;
+  --soft: #7a6555;
   --border: rgba(201,168,76,0.25);
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', sans-serif;
-  --radius: 10px;
+  --fd: 'Playfair Display', Georgia, serif;
+  --fb: 'DM Sans', sans-serif;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--cream); color: var(--text); font-family: var(--fb); font-weight: 300; min-height: 100vh; }
 
-body {
-  background: var(--cream);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-weight: 300;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* ── PAGE SECTIONS (not screens — just hidden divs) ── */
+.page { display: none; }
+.page.on { display: block; }
+#quiz-page.on { display: flex; } /* quiz uses flex row */
 
-/* Background texture */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 10% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
-  pointer-events: none; z-index: 0;
-}
+/* ── DISCLAIMER PAGE ── */
+#disc-page { min-height: 100vh; align-items: center; justify-content: center; padding: 40px 20px; }
+#disc-page.on { display: flex; flex-direction: column; }
+.disc-card { background:#fff; border:1px solid var(--border); border-radius:16px; max-width:620px; width:100%; padding:48px 40px; box-shadow:0 4px 40px rgba(201,168,76,0.1); }
+.brand { font-family:var(--fd); font-size:13px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); text-align:center; }
+.disc-title { font-family:var(--fd); font-size:28px; font-weight:600; color:var(--dark); text-align:center; margin-top:4px; }
+.divider { width:50px; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); margin:18px auto; }
+.disc-intro { font-size:14px; line-height:1.8; color:var(--soft); text-align:center; margin-bottom:24px; }
+.disc-box { background:var(--gold-dim); border:1px solid var(--border); border-radius:10px; padding:22px 26px; margin-bottom:24px; }
+.disc-box p { font-size:13px; line-height:1.9; }
+.disc-box ul { list-style:none; margin:10px 0; }
+.disc-box ul li { font-size:13px; line-height:1.8; padding-left:18px; position:relative; }
+.disc-box ul li::before { content:'—'; position:absolute; left:0; color:var(--gold); font-size:11px; }
+.disc-note { font-size:12px; color:var(--soft); margin-top:12px; line-height:1.7; }
+.disc-fields { display:grid; gap:12px; margin-bottom:22px; }
+.disc-fields input { width:100%; background:#faf7f2; border:1px solid var(--border); border-radius:8px; padding:13px 16px; font-family:var(--fb); font-size:14px; color:var(--text); outline:none; transition:border-color .2s; }
+.disc-fields input:focus { border-color:var(--gold); background:#fff; }
+.disc-fields input::placeholder { color:#baa98a; }
+.disc-consent { font-size:12px; line-height:1.7; color:var(--soft); text-align:center; margin-bottom:22px; }
+.btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--dark); border:none; border-radius:8px; padding:15px 28px; font-family:var(--fb); font-size:14px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .25s; width:100%; }
+.btn-gold:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(201,168,76,0.35); }
+.btn-ghost { background:none; border:1px solid var(--border); color:var(--soft); border-radius:8px; padding:10px 22px; font-family:var(--fb); font-size:13px; cursor:pointer; transition:all .2s; }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
 
-/* ── SCREENS ── */
-.screen { position: relative; z-index: 1; display: none; }
-.screen.active { display: block; }
-
-/* ── DISCLAIMER ── */
-#disclaimer-screen {
-  min-height: 100vh;
-  display: none; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px 20px;
-}
-#disclaimer-screen.active { display: flex; }
-
-.disc-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  max-width: 640px; width: 100%;
-  padding: 48px 40px;
-  box-shadow: 0 4px 40px rgba(201,168,76,0.1);
-}
-.disc-logo {
-  text-align: center;
-  margin-bottom: 28px;
-}
-.disc-logo .brand {
-  font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-.disc-logo .title {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--dark);
-  margin-top: 4px;
-}
-.disc-divider {
-  width: 50px; height: 2px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  margin: 20px auto;
-}
-.disc-intro {
-  font-size: 14px; line-height: 1.8;
-  color: var(--text-soft); text-align: center;
-  margin-bottom: 28px;
-}
-.disc-box {
-  background: var(--gold-dim);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px 28px;
-  margin-bottom: 28px;
-}
-.disc-box p {
-  font-size: 13px; line-height: 1.9;
-  color: var(--text);
-}
-.disc-box ul {
-  list-style: none; margin: 12px 0;
-}
-.disc-box ul li {
-  font-size: 13px; line-height: 1.8;
-  color: var(--text); padding-left: 18px;
-  position: relative;
-}
-.disc-box ul li::before {
-  content: '—';
-  position: absolute; left: 0;
-  color: var(--gold); font-size: 11px;
-}
-.disc-box .disc-note {
-  font-size: 12px; color: var(--text-soft);
-  margin-top: 14px; line-height: 1.7;
-}
-.disc-consent {
-  font-size: 12.5px; line-height: 1.7;
-  color: var(--text-soft); text-align: center;
-  margin-bottom: 28px;
-}
-.disc-consent strong { color: var(--text); }
-
-/* ── NAME/EMAIL COLLECT ── */
-.disc-fields {
-  display: grid; gap: 14px;
-  margin-bottom: 28px;
-}
-.disc-fields input {
-  width: 100%;
-  background: #faf7f2;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 18px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s;
-}
-.disc-fields input:focus {
-  border-color: var(--gold);
-  background: #fff;
-}
-.disc-fields input::placeholder { color: #baa98a; }
-
-/* ── BUTTONS ── */
-.btn-gold {
-  width: 100%;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--dark);
-  border: none;
-  border-radius: 8px;
-  padding: 16px 32px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.btn-gold:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(201,168,76,0.35);
-}
-.btn-ghost {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-soft);
-  border-radius: 8px;
-  padding: 10px 24px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-
-/* ── QUIZ LAYOUT ── */
-#quiz-screen {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 32px 20px 80px;
-}
+/* ── QUIZ PAGE ── */
+#quiz-page { min-height:100vh; align-items:flex-start; gap:0; }
+.quiz-left { flex:1; min-width:0; padding:32px 28px 80px 32px; max-width:720px; }
+.quiz-right { width:270px; flex-shrink:0; padding:24px 20px 24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
 
 /* Progress */
-.quiz-topbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 36px;
-}
-.progress-track {
-  flex: 1; height: 3px;
-  background: rgba(201,168,76,0.15);
-  border-radius: 2px; overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  border-radius: 2px;
-  transition: width 0.5s ease;
-  width: 0%;
-}
-.progress-label {
-  font-size: 12px; font-weight: 400;
-  color: var(--text-soft); white-space: nowrap;
-}
+.topbar { display:flex; align-items:center; gap:14px; margin-bottom:30px; }
+.prog-track { flex:1; height:3px; background:rgba(201,168,76,0.15); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; transition:width .5s ease; width:0%; }
+.prog-lbl { font-size:12px; color:var(--soft); white-space:nowrap; }
 
-/* Section header */
-.section-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--gold-dim);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 5px 16px;
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
-}
-.section-chip::before {
-  content: ''; width: 5px; height: 5px;
-  border-radius: 50%; background: var(--gold);
-}
+/* Section chip */
+.s-chip { display:inline-flex; align-items:center; gap:7px; background:var(--gold-dim); border:1px solid var(--border); border-radius:100px; padding:5px 14px; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.s-chip::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--gold); }
 
 /* Question card */
-.q-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 36px 40px;
-  box-shadow: 0 2px 20px rgba(201,168,76,0.06);
-  animation: fadeUp 0.35s ease forwards;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.q-card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:34px 36px; box-shadow:0 2px 20px rgba(201,168,76,0.06); animation:fadeUp .3s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.q-num { font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.q-text { font-family:var(--fd); font-size:clamp(17px,2.5vw,22px); line-height:1.45; color:var(--dark); margin-bottom:22px; }
+.q-badge { display:inline-block; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:500; color:var(--soft); background:#f5f0e8; border-radius:4px; padding:2px 8px; margin-bottom:18px; }
+.opts { display:flex; flex-direction:column; gap:9px; }
+.opt { display:flex; align-items:center; gap:13px; background:#faf7f2; border:1.5px solid rgba(201,168,76,0.2); border-radius:10px; padding:14px 18px; cursor:pointer; text-align:left; font-family:var(--fb); font-size:14px; font-weight:300; color:var(--text); width:100%; transition:all .18s ease; }
+.opt:hover { border-color:var(--gold); background:var(--gold-dim); transform:translateX(3px); }
+.opt.sel { border-color:var(--gold); background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(232,201,122,0.1)); color:var(--dark); font-weight:400; }
+.dot { width:19px; height:19px; border-radius:50%; border:1.5px solid rgba(201,168,76,0.4); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .18s; }
+.opt.cb .dot { border-radius:5px; }
+.opt.sel .dot { background:var(--gold); border-color:var(--gold); }
+.opt.sel .dot::after { content:'✓'; font-size:11px; color:#fff; font-weight:700; }
+.opt.rb.sel .dot::after { content:''; width:7px; height:7px; border-radius:50%; background:#fff; display:block; }
+.q-nav { display:flex; justify-content:space-between; align-items:center; margin-top:24px; }
+.nav-hint { font-size:12px; color:var(--soft); }
 
-.q-num {
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 10px;
-}
-.q-text {
-  font-family: var(--font-display);
-  font-size: clamp(18px, 3vw, 23px);
-  font-weight: 400; line-height: 1.45;
-  color: var(--dark); margin-bottom: 28px;
-}
+/* ── LIVE TRACKER ── */
+.tracker { background:var(--dark); border-radius:16px; border:1px solid rgba(201,168,76,0.18); overflow:hidden; box-shadow:0 4px 30px rgba(0,0,0,0.18); }
+.tr-head { padding:18px 18px 14px; border-bottom:1px solid rgba(201,168,76,0.1); }
+.tr-title { font-size:11px; font-weight:500; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); margin-bottom:2px; }
+.tr-sub { font-size:11px; color:rgba(255,255,255,0.3); }
+.tr-bars { padding:16px 18px; display:flex; flex-direction:column; gap:12px; }
+.tr-row { display:flex; flex-direction:column; gap:5px; }
+.tr-top { display:flex; justify-content:space-between; align-items:center; }
+.tr-name { font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:.3px; }
+.tr-score { font-size:12px; font-weight:500; color:var(--gold); min-width:26px; text-align:right; transition:color .3s; }
+.tr-score.flash { animation:scFlash .5s ease; }
+@keyframes scFlash { 0%{color:#fff;font-size:13px} 100%{color:var(--gold);font-size:12px} }
+.tr-track { height:5px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
+.tr-fill { height:100%; border-radius:3px; transition:width .45s cubic-bezier(.25,1,.5,1); width:0%; }
+.tr-fill.metabolic  { background:linear-gradient(90deg,#c9a84c,#e8c97a); }
+.tr-fill.nervous    { background:linear-gradient(90deg,#7a9fd4,#a8c0e8); }
+.tr-fill.hormonal   { background:linear-gradient(90deg,#b07acc,#cfa8e8); }
+.tr-fill.immune     { background:linear-gradient(90deg,#cc7a7a,#e8a8a8); }
+.tr-fill.mechanical { background:linear-gradient(90deg,#7abfb0,#a8dfd0); }
+.tr-foot { padding:14px 18px 16px; border-top:1px solid rgba(201,168,76,0.1); }
+.tr-foot-lbl { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:8px; }
+.tr-pills { display:flex; flex-wrap:wrap; gap:5px; min-height:22px; }
+.tr-none { font-size:11px; color:rgba(255,255,255,0.2); font-style:italic; }
+.pill { display:inline-flex; align-items:center; gap:4px; border-radius:100px; padding:3px 10px; font-size:11px; font-weight:500; animation:pillPop .2s ease; }
+@keyframes pillPop { from{transform:scale(.6);opacity:0} to{transform:scale(1);opacity:1} }
+.pill .pd { width:5px; height:5px; border-radius:50%; background:currentColor; opacity:.7; }
+.pill.metabolic  { background:rgba(201,168,76,0.2); color:#e8c97a; }
+.pill.nervous    { background:rgba(122,159,212,0.2); color:#a8c0e8; }
+.pill.hormonal   { background:rgba(176,122,204,0.2); color:#cfa8e8; }
+.pill.immune     { background:rgba(204,122,122,0.2); color:#e8a8a8; }
+.pill.mechanical { background:rgba(122,191,176,0.2); color:#a8dfd0; }
 
-/* Type badge */
-.q-type-badge {
-  display: inline-block;
-  font-size: 10px; letter-spacing: 1.5px;
-  text-transform: uppercase; font-weight: 500;
-  color: var(--text-soft);
-  background: #f5f0e8;
-  border-radius: 4px; padding: 2px 8px;
-  margin-bottom: 20px;
-}
+/* ── LOADING PAGE ── */
+#load-page { min-height:100vh; align-items:center; justify-content:center; text-align:center; }
+#load-page.on { display:flex; flex-direction:column; }
+.load-title { font-family:var(--fd); font-size:28px; color:var(--dark); margin-bottom:8px; }
+.load-sub { font-size:14px; color:var(--soft); margin-bottom:28px; }
+.dots { display:flex; gap:10px; justify-content:center; }
+.dot-a { width:9px; height:9px; border-radius:50%; background:var(--gold); animation:db 1.4s ease infinite; }
+.dot-a:nth-child(2){animation-delay:.2s} .dot-a:nth-child(3){animation-delay:.4s}
+@keyframes db { 0%,80%,100%{transform:translateY(0);opacity:.3} 40%{transform:translateY(-10px);opacity:1} }
 
-/* Options */
-.options-list { display: flex; flex-direction: column; gap: 10px; }
+/* ── RESULTS PAGE ── */
+#res-page { max-width:760px; margin:0 auto; padding:40px 20px 80px; }
+.res-head { text-align:center; margin-bottom:44px; }
+.res-eye { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:10px; }
+.res-name { font-family:var(--fd); font-size:clamp(24px,5vw,36px); font-weight:600; color:var(--dark); margin-bottom:6px; }
+.res-name em { font-style:italic; color:var(--gold); }
+.res-sub { font-size:14px; color:var(--soft); line-height:1.7; }
+.sec-lbl { font-size:11px; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--soft); margin-bottom:14px; margin-top:36px; }
+.dr-card { border-radius:14px; padding:26px 30px; margin-bottom:12px; position:relative; overflow:hidden; }
+.dr-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:linear-gradient(180deg,var(--gold),var(--gold-light)); }
+.dr-card.primary { background:linear-gradient(135deg,var(--dark),var(--dark-mid)); border:1px solid rgba(201,168,76,0.3); }
+.dr-card.secondary { background:#fff; border:1.5px solid var(--gold); }
+.dr-card.support { background:#faf7f2; border:1px solid var(--border); }
+.dr-badge { font-size:10px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:7px; }
+.dr-card.primary .dr-badge { color:var(--gold-light); }
+.dr-nm { font-family:var(--fd); font-size:21px; font-weight:600; margin-bottom:5px; }
+.dr-card.primary .dr-nm { color:#fff; }
+.dr-card.secondary .dr-nm, .dr-card.support .dr-nm { color:var(--dark); }
+.dr-desc { font-size:13px; line-height:1.75; }
+.dr-card.primary .dr-desc { color:rgba(255,255,255,0.6); }
+.dr-card.secondary .dr-desc, .dr-card.support .dr-desc { color:var(--soft); }
+.dr-bar-t { margin-top:14px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; }
+.dr-card.secondary .dr-bar-t, .dr-card.support .dr-bar-t { background:rgba(201,168,76,0.12); }
+.dr-bar-f { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; transition:width 1.2s cubic-bezier(.25,1,.5,1); width:0%; }
+.bk-row { display:flex; align-items:center; gap:12px; margin-bottom:13px; }
+.bk-name { width:155px; flex-shrink:0; font-size:13px; color:var(--text); }
+.bk-track { flex:1; height:6px; background:rgba(201,168,76,0.12); border-radius:3px; overflow:hidden; }
+.bk-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:3px; transition:width 1.2s cubic-bezier(.25,1,.5,1); width:0%; }
+.bk-val { width:34px; font-size:13px; font-weight:500; color:var(--gold); text-align:right; }
+.disc-note-box { background:#f5f0e8; border:1px solid var(--border); border-radius:10px; padding:18px 22px; font-size:12px; line-height:1.8; color:var(--soft); margin:32px 0; }
 
-.opt-btn {
-  display: flex; align-items: center; gap: 14px;
-  background: #faf7f2;
-  border: 1.5px solid rgba(201,168,76,0.2);
-  border-radius: 10px;
-  padding: 15px 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  font-family: var(--font-body);
-  font-size: 14px; font-weight: 300;
-  color: var(--text);
-  width: 100%;
-}
-.opt-btn:hover {
-  border-color: var(--gold);
-  background: var(--gold-dim);
-  transform: translateX(3px);
-}
-.opt-btn.selected {
-  border-color: var(--gold);
-  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(232,201,122,0.1));
-  color: var(--dark);
-  font-weight: 400;
-}
-.opt-indicator {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(201,168,76,0.4);
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-.opt-btn.checkbox .opt-indicator { border-radius: 5px; }
-.opt-btn.selected .opt-indicator {
-  background: var(--gold);
-  border-color: var(--gold);
-}
-.opt-btn.selected .opt-indicator::after {
-  content: '✓';
-  font-size: 11px; color: #fff; font-weight: 700;
-}
-.opt-btn.radio.selected .opt-indicator::after {
-  content: '';
-  width: 8px; height: 8px;
-  border-radius: 50%; background: #fff;
-  display: block;
-}
-
-/* Nav */
-.q-nav {
-  display: flex; justify-content: space-between;
-  align-items: center; margin-top: 28px;
-}
-.q-nav-hint {
-  font-size: 12px; color: var(--text-soft);
-}
-
-/* ── RESULTS SCREEN ── */
-#results-screen {
-  max-width: 760px; margin: 0 auto;
-  padding: 40px 20px 80px;
-}
-
-.results-header { text-align: center; margin-bottom: 48px; }
-.results-eyebrow {
-  font-size: 11px; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--gold);
-  font-weight: 500; margin-bottom: 12px;
-}
-.results-name {
-  font-family: var(--font-display);
-  font-size: clamp(26px, 5vw, 38px);
-  font-weight: 600; color: var(--dark);
-  margin-bottom: 8px;
-}
-.results-name em { font-style: italic; color: var(--gold); }
-.results-subtitle {
-  font-size: 14px; color: var(--text-soft); line-height: 1.7;
-}
-.results-divider {
-  width: 50px; height: 2px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  margin: 20px auto;
-}
-
-/* Driver cards */
-.driver-section { margin-bottom: 40px; }
-.driver-label {
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 3px; text-transform: uppercase;
-  color: var(--text-soft); margin-bottom: 16px;
-}
-
-.driver-card {
-  border-radius: 14px;
-  padding: 28px 32px;
-  margin-bottom: 12px;
-  position: relative; overflow: hidden;
-}
-.driver-card.primary {
-  background: linear-gradient(135deg, var(--dark), var(--dark-mid));
-  border: 1px solid rgba(201,168,76,0.3);
-}
-.driver-card.secondary {
-  background: #fff;
-  border: 1.5px solid var(--gold);
-}
-.driver-card.supporting {
-  background: #faf7f2;
-  border: 1px solid var(--border);
-}
-.driver-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 4px; height: 100%;
-  background: linear-gradient(180deg, var(--gold), var(--gold-light));
-}
-
-.driver-badge {
-  font-size: 10px; font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 8px;
-}
-.driver-card.primary .driver-badge { color: var(--gold-light); }
-
-.driver-name {
-  font-family: var(--font-display);
-  font-size: 22px; font-weight: 600;
-  margin-bottom: 6px;
-}
-.driver-card.primary .driver-name { color: #fff; }
-.driver-card.secondary .driver-name,
-.driver-card.supporting .driver-name { color: var(--dark); }
-
-.driver-desc {
-  font-size: 13px; line-height: 1.75;
-}
-.driver-card.primary .driver-desc { color: rgba(255,255,255,0.65); }
-.driver-card.secondary .driver-desc,
-.driver-card.supporting .driver-desc { color: var(--text-soft); }
-
-.driver-score-bar {
-  margin-top: 16px; height: 4px;
-  background: rgba(255,255,255,0.1); border-radius: 2px;
-  overflow: hidden;
-}
-.driver-card.secondary .driver-score-bar,
-.driver-card.supporting .driver-score-bar {
-  background: rgba(201,168,76,0.15);
-}
-.driver-score-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  border-radius: 2px; width: 0%;
-  transition: width 1.4s cubic-bezier(0.25,1,0.5,1);
-}
-
-/* All 5 breakdown */
-.breakdown-section { margin-bottom: 40px; }
-.breakdown-title {
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 3px; text-transform: uppercase;
-  color: var(--text-soft); margin-bottom: 20px;
-}
-.breakdown-row {
-  display: flex; align-items: center;
-  gap: 14px; margin-bottom: 14px;
-}
-.breakdown-name {
-  width: 160px; flex-shrink: 0;
-  font-size: 13px; font-weight: 400;
-  color: var(--text);
-}
-.breakdown-track {
-  flex: 1; height: 6px;
-  background: rgba(201,168,76,0.12);
-  border-radius: 3px; overflow: hidden;
-}
-.breakdown-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  border-radius: 3px; width: 0%;
-  transition: width 1.2s cubic-bezier(0.25,1,0.5,1);
-}
-.breakdown-val {
-  width: 36px; flex-shrink: 0;
-  font-size: 13px; font-weight: 500;
-  color: var(--gold); text-align: right;
-}
-
-/* Disclaimer note */
-.results-disclaimer {
-  background: #f5f0e8;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px 24px;
-  font-size: 12px; line-height: 1.8;
-  color: var(--text-soft); margin-bottom: 32px;
-}
-
-/* Retake */
-.results-actions { text-align: center; }
-
-/* ── LOADING ── */
-#loading-screen {
-  min-height: 100vh;
-  display: none; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-}
-#loading-screen.active { display: flex; }
-.loading-title {
-  font-family: var(--font-display);
-  font-size: 28px; color: var(--dark);
-  margin-bottom: 8px;
-}
-.loading-sub { font-size: 14px; color: var(--text-soft); margin-bottom: 32px; }
-.loading-dots { display: flex; gap: 10px; justify-content: center; }
-.loading-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--gold);
-  animation: dotBounce 1.4s ease infinite;
-}
-.loading-dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes dotBounce {
-  0%,80%,100% { transform: translateY(0); opacity: 0.3; }
-  40% { transform: translateY(-10px); opacity: 1; }
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 560px) {
-  .q-card { padding: 24px 20px; }
-  .disc-card { padding: 32px 24px; }
-  .driver-card { padding: 22px 22px; }
-  .breakdown-name { width: 120px; font-size: 12px; }
+/* ── MOBILE ── */
+@media(max-width:700px){
+  .quiz-left { padding:20px 16px 60px; }
+  .quiz-right { display:none; } /* hide sidebar on mobile — tracker shown inline above */
+  .q-card { padding:22px 18px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 1: DISCLAIMER + CONSENT
-══════════════════════════════════════════ -->
-<div id="disclaimer-screen" class="screen active">
+<!-- ══ DISCLAIMER ══ -->
+<div id="disc-page" class="page on">
   <div class="disc-card">
-    <div class="disc-logo">
-      <div class="brand">MsKimTheStylist</div>
-      <div class="title">Hair Health Audit</div>
-    </div>
-    <div class="disc-divider"></div>
-
-    <p class="disc-intro">
-      This audit is intended for educational and informational purposes only.
-      It is designed to identify patterns and possible contributors to hair
-      and scalp concerns from a holistic, full-body perspective.
-    </p>
-
+    <div class="brand">MsKimTheStylist</div>
+    <div class="disc-title">Hair Health Audit</div>
+    <div class="divider"></div>
+    <p class="disc-intro">This audit is intended for educational and informational purposes only. It is designed to identify patterns and possible contributors to hair and scalp concerns from a holistic, full-body perspective.</p>
     <div class="disc-box">
       <p><strong>This audit:</strong></p>
       <ul>
@@ -539,130 +181,107 @@ body::before {
         <li>Does not replace medical advice, diagnosis, or treatment</li>
         <li>Is not intended to treat, cure, or prevent disease</li>
       </ul>
-      <p class="disc-note">
-        Results are based on the information you provide and are meant to support awareness
-        and informed decision-making. Any recommendations offered are for educational
-        purposes and should not be interpreted as medical advice.<br><br>
-        If you are experiencing severe symptoms or have a known medical condition,
-        please consult with a qualified healthcare professional.
-      </p>
+      <p class="disc-note">Results are based on the information you provide and are meant to support awareness and informed decision-making. Any recommendations are for educational purposes only and should not be interpreted as medical advice.<br><br>If you are experiencing severe symptoms or have a known medical condition, please consult with a qualified healthcare professional.</p>
     </div>
-
     <div class="disc-fields">
-      <input type="text"  id="user-name"  placeholder="Your first name" autocomplete="given-name">
-      <input type="email" id="user-email" placeholder="Your email address" autocomplete="email">
+      <input type="text"  id="inp-name"  placeholder="Your first name" autocomplete="given-name">
+      <input type="email" id="inp-email" placeholder="Your email address" autocomplete="email">
     </div>
-
-    <p class="disc-consent">
-      By continuing, you acknowledge that you understand and agree to the above
-      and consent to receive your <strong>Hair Health Snapshot</strong> via email.
-    </p>
-
+    <p class="disc-consent">By continuing you acknowledge and agree to the above and consent to receive your <strong>Hair Health Snapshot</strong> via email.</p>
     <button class="btn-gold" onclick="startAudit()">Begin My Hair Health Audit →</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 2: QUIZ
-══════════════════════════════════════════ -->
-<div id="quiz-screen" class="screen">
-  <div class="quiz-topbar">
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill"></div>
+<!-- ══ QUIZ ══ -->
+<div id="quiz-page" class="page">
+
+  <!-- LEFT: questions -->
+  <div class="quiz-left">
+    <div class="topbar">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-lbl" id="prog-lbl">1 of 35</div>
     </div>
-    <div class="progress-label" id="progress-label">1 of 35</div>
-  </div>
-
-  <div class="section-chip" id="section-chip">Section 1</div>
-
-  <div class="q-card" id="q-card">
-    <!-- Rendered by JS -->
-  </div>
-
-  <div class="q-nav">
-    <button class="btn-ghost" id="btn-back" onclick="goBack()">← Back</button>
-    <span class="q-nav-hint" id="q-nav-hint"></span>
-    <button class="btn-gold" id="btn-next" onclick="goNext()" style="width:auto;padding:12px 28px;">Next →</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 3: CALCULATING
-══════════════════════════════════════════ -->
-<div id="loading-screen" class="screen">
-  <div class="loading-title">Analysing your responses…</div>
-  <div class="loading-sub">Mapping your hair health snapshot</div>
-  <div class="loading-dots">
-    <div class="loading-dot"></div>
-    <div class="loading-dot"></div>
-    <div class="loading-dot"></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 4: RESULTS
-══════════════════════════════════════════ -->
-<div id="results-screen" class="screen">
-  <div class="results-header">
-    <div class="results-eyebrow">Your Hair Health Snapshot</div>
-    <div class="results-name">Your <em>Body System Profile</em></div>
-    <div class="results-divider"></div>
-    <p class="results-subtitle" id="results-greeting"></p>
-  </div>
-
-  <!-- Primary + Secondary drivers -->
-  <div class="driver-section">
-    <div class="driver-label">Primary &amp; Secondary Drivers</div>
-    <div id="primary-card" class="driver-card primary">
-      <div class="driver-badge">Primary Driver</div>
-      <div class="driver-name" id="primary-name"></div>
-      <div class="driver-desc" id="primary-desc"></div>
-      <div class="driver-score-bar"><div class="driver-score-fill" id="primary-bar"></div></div>
-    </div>
-    <div id="secondary-card" class="driver-card secondary">
-      <div class="driver-badge">Secondary Driver</div>
-      <div class="driver-name" id="secondary-name"></div>
-      <div class="driver-desc" id="secondary-desc"></div>
-      <div class="driver-score-bar"><div class="driver-score-fill" id="secondary-bar"></div></div>
+    <div class="s-chip" id="s-chip">Section 1</div>
+    <div class="q-card" id="q-card"></div>
+    <div class="q-nav">
+      <button class="btn-ghost" id="btn-back" onclick="goBack()" style="visibility:hidden">← Back</button>
+      <span class="nav-hint" id="nav-hint"></span>
+      <button class="btn-gold" id="btn-next" onclick="goNext()" style="width:auto;padding:12px 26px">Next →</button>
     </div>
   </div>
 
-  <!-- Supporting contributors -->
-  <div class="driver-section" id="supporting-section">
-    <div class="driver-label">Supporting Contributors</div>
-    <div id="supporting-cards"></div>
+  <!-- RIGHT: live tracker -->
+  <div class="quiz-right">
+    <div class="tracker">
+      <div class="tr-head">
+        <div class="tr-title">Live Score Tracker</div>
+        <div class="tr-sub">Updates with every answer</div>
+      </div>
+      <div class="tr-bars" id="tr-bars"></div>
+      <div class="tr-foot">
+        <div class="tr-foot-lbl">This question adds:</div>
+        <div class="tr-pills" id="tr-pills"><span class="tr-none">Select an answer to see points</span></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Full breakdown -->
-  <div class="breakdown-section">
-    <div class="breakdown-title">All Five Body Systems</div>
-    <div id="breakdown-rows"></div>
-  </div>
+</div>
 
-  <div class="results-disclaimer">
-    <strong>A note on your results:</strong> This audit is a pattern-recognition tool designed to help guide you
-    toward a deeper conversation about your hair health. Hair concerns are almost always multifactorial —
-    your body systems work together, and the scores above reflect layered contributors, not a single cause.
-    These results are for educational purposes only and do not constitute medical advice.
-  </div>
-
-  <div class="results-actions">
-    <button class="btn-gold" onclick="retake()" style="width:auto;padding:14px 36px;">Retake Audit</button>
+<!-- ══ LOADING ══ -->
+<div id="load-page" class="page">
+  <div class="load-title">Analysing your responses…</div>
+  <div class="load-sub">Mapping your hair health snapshot</div>
+  <div class="dots">
+    <div class="dot-a"></div><div class="dot-a"></div><div class="dot-a"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
+<!-- ══ RESULTS ══ -->
+<div id="res-page" class="page">
+  <div class="res-head">
+    <div class="res-eye">Your Hair Health Snapshot</div>
+    <div class="res-name">Your <em>Body System Profile</em></div>
+    <div class="divider"></div>
+    <p class="res-sub" id="res-greeting"></p>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:0">Primary &amp; Secondary Drivers</div>
+  <div class="dr-card primary" id="pri-card">
+    <div class="dr-badge">Primary Driver</div>
+    <div class="dr-nm" id="pri-nm"></div>
+    <div class="dr-desc" id="pri-desc"></div>
+    <div class="dr-bar-t"><div class="dr-bar-f" id="pri-bar"></div></div>
+  </div>
+  <div class="dr-card secondary" id="sec-card">
+    <div class="dr-badge">Secondary Driver</div>
+    <div class="dr-nm" id="sec-nm"></div>
+    <div class="dr-desc" id="sec-desc"></div>
+    <div class="dr-bar-t"><div class="dr-bar-f" id="sec-bar"></div></div>
+  </div>
+
+  <div id="sup-section" style="display:none">
+    <div class="sec-lbl">Supporting Contributors</div>
+    <div id="sup-cards"></div>
+  </div>
+
+  <div class="sec-lbl">All Five Body Systems</div>
+  <div id="bk-rows"></div>
+
+  <!-- Per-question breakdown (collapsible) -->
+  <div class="sec-lbl" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Per-Question Breakdown</span>
+    <button class="btn-ghost" onclick="toggleBreakdown()" id="bk-btn" style="font-size:11px;padding:5px 12px">Show ▾</button>
+  </div>
+  <p style="font-size:12px;color:var(--soft);margin-bottom:14px;line-height:1.6">Every point below was added only because that exact option was selected.</p>
+  <div id="bk-detail" style="display:none"></div>
+
+  <div class="disc-note-box"><strong>A note on your results:</strong> This audit is a pattern-recognition tool designed to guide you toward a deeper conversation about your hair health. Hair concerns are almost always multifactorial — your body systems work together. These results are for educational purposes only and do not constitute medical advice.</div>
+  <div style="text-align:center"><button class="btn-gold" onclick="retake()" style="width:auto;padding:14px 34px">Retake Audit</button></div>
+</div>
+
+
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// THE CORE LESSON FROM THE JOTFORM SAGA:
-// All scoring is done in pure JavaScript. Every option has ONLY the points
-// explicitly assigned to it in the doc. "None"/zero options contribute nothing.
-// Radio = exactly one selection fires. Checkbox = each selected option fires
-// independently. No accumulator bleed. No "is filled" triggers. Pure equality.
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── DATA ────────────────────────────────────────────────────────────────────
 const QUESTIONS = [
   // ── SECTION 1: HAIR + SCALP EXPERIENCE ──────────────────────────────────
   {id:1, type:'radio', section:'Section 1 — Hair + Scalp Experience',
@@ -955,6 +574,7 @@ const QUESTIONS = [
   ]},
 ];
 
+
 // Category metadata
 const CATEGORIES = {
   nervous:   { name:'Nervous System',      desc:'Your nervous system is showing signs of sustained stress or dysregulation. Chronic stress directly disrupts the hair growth cycle through cortisol and inflammation.' },
@@ -964,271 +584,292 @@ const CATEGORIES = {
   mechanical:{ name:'Mechanical / External', desc:'Physical stressors from styling, tension, heat, or chemical services are likely contributing to hair and scalp disruption.' },
 };
 
-// ── STATE ──────────────────────────────────────────────────────────────────
-let currentIndex = 0;
-let answers = {};     // { qId: Set of selectedOptionIndices }  for checkbox
-                      // { qId: selectedOptionIndex }           for radio
+
+// ─── TRACKER CONSTANTS ───────────────────────────────────────────────────────
+const CAT_ORDER  = ['metabolic','nervous','hormonal','immune','mechanical'];
+const CAT_MAX    = {metabolic:287, nervous:152, immune:121, hormonal:118, mechanical:40};
+const CAT_LABELS = {metabolic:'Metabolic',nervous:'Nervous',hormonal:'Hormonal',immune:'Immune',mechanical:'Mechanical'};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let ci = 0;          // current question index
+let answers = {};    // {qId: optionIndex (radio) | Set (checkbox)}
 let userName = '';
 
-// ── SCREEN HELPERS ─────────────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+// ─── PAGE SWITCHING ──────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
 }
 
-// ── START ──────────────────────────────────────────────────────────────────
+// ─── START ───────────────────────────────────────────────────────────────────
 function startAudit() {
-  userName = document.getElementById('user-name').value.trim();
-  currentIndex = 0;
-  answers = {};
-  showScreen('quiz-screen');
-  renderQuestion(0);
+  userName = document.getElementById('inp-name').value.trim();
+  ci = 0; answers = {};
+  show('quiz-page');
+  initTracker();
+  renderQ(0);
 }
 
-// ── RENDER QUESTION ────────────────────────────────────────────────────────
-function renderQuestion(index) {
-  const q = QUESTIONS[index];
-  const card = document.getElementById('q-card');
+// ─── RENDER QUESTION ─────────────────────────────────────────────────────────
+function renderQ(idx) {
+  const q = QUESTIONS[idx];
 
-  // Animate
+  // Progress
+  document.getElementById('prog-fill').style.width = (idx / QUESTIONS.length * 100) + '%';
+  document.getElementById('prog-lbl').textContent = (idx+1) + ' of ' + QUESTIONS.length;
+  document.getElementById('s-chip').textContent = q.section;
+  document.getElementById('btn-back').style.visibility = idx === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = idx === QUESTIONS.length-1 ? 'See My Results →' : 'Next →';
+  document.getElementById('nav-hint').textContent = q.type === 'checkbox' ? 'Select all that apply' : 'Select one';
+
+  // Build options HTML
+  const cur = answers[q.id];
+  let html = `<div class="q-num">Question ${idx+1}</div>
+<div class="q-text">${q.text}</div>
+<span class="q-badge">${q.type === 'checkbox' ? 'Select all that apply' : 'Select one'}</span>
+<div class="opts">`;
+
+  q.options.forEach((opt, i) => {
+    const sel = q.type === 'radio' ? cur === i : (cur instanceof Set && cur.has(i));
+    html += `<button class="opt ${q.type === 'checkbox' ? 'cb' : 'rb'}${sel ? ' sel' : ''}" onclick="pick(${idx},${i})">
+  <span class="dot"></span><span>${opt.label}</span>
+</button>`;
+  });
+  html += '</div>';
+
+  const card = document.getElementById('q-card');
   card.style.animation = 'none';
   void card.offsetWidth;
   card.style.animation = '';
+  card.innerHTML = html;
 
-  // Progress
-  const pct = (index / QUESTIONS.length) * 100;
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label').textContent = (index + 1) + ' of ' + QUESTIONS.length;
-  document.getElementById('section-chip').textContent = q.section;
-
-  // Back button
-  document.getElementById('btn-back').style.visibility = index === 0 ? 'hidden' : 'visible';
-
-  // Nav hint
-  const hint = document.getElementById('q-nav-hint');
-  hint.textContent = q.type === 'checkbox' ? 'Select all that apply' : 'Select one';
-
-  // Build card HTML
-  const typeLabel = q.type === 'checkbox' ? 'Select all that apply' : 'Select one';
-  let optionsHTML = '';
-  const currentAnswers = answers[q.id];
-
-  q.options.forEach((opt, i) => {
-    let isSelected = false;
-    if (q.type === 'radio') {
-      isSelected = currentAnswers === i;
-    } else {
-      isSelected = currentAnswers instanceof Set && currentAnswers.has(i);
-    }
-    const selClass = isSelected ? ' selected' : '';
-    optionsHTML += `
-      <button class="opt-btn ${q.type}${selClass}" onclick="selectOption(${index}, ${i}, this)">
-        <span class="opt-indicator"></span>
-        <span>${opt.label}</span>
-      </button>`;
-  });
-
-  card.innerHTML = `
-    <div class="q-num">Question ${index + 1}</div>
-    <div class="q-text">${q.text}</div>
-    <span class="q-type-badge">${typeLabel}</span>
-    <div class="options-list">${optionsHTML}</div>
-  `;
-
-  // Next button label
-  document.getElementById('btn-next').textContent = index === QUESTIONS.length - 1 ? 'See My Results →' : 'Next →';
+  // Update tracker to show this question's current state
+  refreshTracker(idx);
 }
 
-// ── SELECT OPTION ──────────────────────────────────────────────────────────
-function selectOption(qIndex, optIndex, btn) {
-  const q = QUESTIONS[qIndex];
-  const card = document.getElementById('q-card');
+// ─── PICK OPTION ─────────────────────────────────────────────────────────────
+function pick(qIdx, optIdx) {
+  const q = QUESTIONS[qIdx];
 
   if (q.type === 'radio') {
-    // Exactly one selection — deselect all others first
-    answers[q.id] = optIndex;
-    card.querySelectorAll('.opt-btn').forEach((b, i) => {
-      b.classList.toggle('selected', i === optIndex);
-    });
-    // Auto-advance after short delay for radio
-    setTimeout(goNext, 320);
+    answers[q.id] = optIdx;
+    // Update visual immediately without full re-render
+    document.querySelectorAll('#q-card .opt').forEach((b,i) => b.classList.toggle('sel', i===optIdx));
+    refreshTracker(qIdx);
 
   } else {
-    // Checkbox — toggle this option; "None" clears all others
-    if (!answers[q.id]) answers[q.id] = new Set();
+    if (!(answers[q.id] instanceof Set)) answers[q.id] = new Set();
     const set = answers[q.id];
-    const isNone = q.options[optIndex].label.toLowerCase() === 'none' ||
-                   q.options[optIndex].label.toLowerCase() === 'not applicable' ||
-                   q.options[optIndex].label.toLowerCase() === 'i do not use caffeine';
+    const lbl = q.options[optIdx].label.toLowerCase();
+    const isZero = lbl === 'none' || lbl === 'not applicable' || lbl === 'i do not use caffeine';
 
-    if (isNone) {
-      // Selecting None/NA clears everything else, toggles None itself
-      if (set.has(optIndex)) {
-        set.delete(optIndex);
-      } else {
-        set.clear();
-        set.add(optIndex);
-      }
+    if (isZero) {
+      if (set.has(optIdx)) { set.delete(optIdx); } else { set.clear(); set.add(optIdx); }
     } else {
-      // Selecting a real option clears any None/NA
-      if (set.has(optIndex)) {
-        set.delete(optIndex);
+      if (set.has(optIdx)) {
+        set.delete(optIdx);
       } else {
-        // Clear any None/NA options
-        q.options.forEach((o, i) => {
-          const lbl = o.label.toLowerCase();
-          if (lbl === 'none' || lbl === 'not applicable' || lbl === 'i do not use caffeine') {
-            set.delete(i);
-          }
+        // Clear any zero-value options
+        q.options.forEach((o,i) => {
+          const l = o.label.toLowerCase();
+          if (l==='none'||l==='not applicable'||l==='i do not use caffeine') set.delete(i);
         });
-        set.add(optIndex);
+        set.add(optIdx);
       }
     }
-    // Re-render selections
-    card.querySelectorAll('.opt-btn').forEach((b, i) => {
-      b.classList.toggle('selected', set.has(i));
-    });
+    document.querySelectorAll('#q-card .opt').forEach((b,i) => b.classList.toggle('sel', set.has(i)));
+    refreshTracker(qIdx);
   }
 }
 
-// ── NAVIGATION ─────────────────────────────────────────────────────────────
+// ─── NAV ─────────────────────────────────────────────────────────────────────
 function goNext() {
-  if (currentIndex === QUESTIONS.length - 1) {
-    showScreen('loading-screen');
-    setTimeout(calcResults, 1800);
-  } else {
-    currentIndex++;
-    renderQuestion(currentIndex);
-  }
+  if (ci === QUESTIONS.length-1) { show('load-page'); setTimeout(calcResults, 1600); }
+  else { ci++; renderQ(ci); }
+}
+function goBack() { if (ci > 0) { ci--; renderQ(ci); } }
+
+// ─── LIVE TRACKER ────────────────────────────────────────────────────────────
+function initTracker() {
+  let html = '';
+  CAT_ORDER.forEach(cat => {
+    html += `<div class="tr-row">
+  <div class="tr-top">
+    <span class="tr-name">${CAT_LABELS[cat]}</span>
+    <span class="tr-score" id="ts-${cat}">0</span>
+  </div>
+  <div class="tr-track"><div class="tr-fill ${cat}" id="tf-${cat}" style="width:0%"></div></div>
+</div>`;
+  });
+  document.getElementById('tr-bars').innerHTML = html;
 }
 
-function goBack() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    renderQuestion(currentIndex);
-  }
-}
-
-// ── SCORING ────────────────────────────────────────────────────────────────
-// THIS IS THE CRITICAL FIX vs the Jotform approach:
-// We iterate each question, look at EXACTLY what was selected,
-// and add ONLY the scores explicitly assigned to that option.
-// Nothing fires unless its specific option was chosen.
-
-function calcResults() {
-  const totals = { nervous:0, metabolic:0, immune:0, hormonal:0, mechanical:0 };
-
+function refreshTracker(qIdx) {
+  // Recalculate running totals from ALL answered questions
+  const totals = {metabolic:0,nervous:0,hormonal:0,immune:0,mechanical:0};
   QUESTIONS.forEach(q => {
-    const answer = answers[q.id];
-
-    if (q.type === 'radio') {
-      // Radio: single index or undefined
-      if (answer !== undefined) {
-        const opt = q.options[answer];
-        // Add ONLY the scores defined for THIS option
-        Object.entries(opt.scores).forEach(([cat, val]) => {
-          totals[cat] += val;
-        });
-      }
-
-    } else {
-      // Checkbox: Set of selected indices
-      if (answer instanceof Set) {
-        answer.forEach(optIndex => {
-          const opt = q.options[optIndex];
-          // "None"/"Not applicable" options have scores:{} — so nothing added
-          Object.entries(opt.scores).forEach(([cat, val]) => {
-            totals[cat] += val;
-          });
-        });
-      }
+    const ans = answers[q.id];
+    if (q.type==='radio' && ans !== undefined) {
+      Object.entries(q.options[ans].scores).forEach(([c,v]) => totals[c] += v);
+    } else if (q.type==='checkbox' && ans instanceof Set) {
+      ans.forEach(i => Object.entries(q.options[i].scores).forEach(([c,v]) => totals[c] += v));
     }
   });
 
-  showResults(totals);
+  // Update bars + scores
+  CAT_ORDER.forEach(cat => {
+    const sc = document.getElementById('ts-'+cat);
+    const bar = document.getElementById('tf-'+cat);
+    if (!sc) return;
+    const old = parseInt(sc.textContent)||0;
+    const nw = totals[cat];
+    if (nw !== old) {
+      sc.textContent = nw;
+      sc.classList.remove('flash');
+      void sc.offsetWidth;
+      sc.classList.add('flash');
+    }
+    bar.style.width = Math.min(100, Math.round(nw/CAT_MAX[cat]*100)) + '%';
+  });
+
+  // Show what THIS question contributes
+  const q = QUESTIONS[qIdx];
+  const ans = answers[q.id];
+  const pills = {};
+  if (q.type==='radio' && ans !== undefined) {
+    Object.entries(q.options[ans].scores).forEach(([c,v]) => pills[c]=(pills[c]||0)+v);
+  } else if (q.type==='checkbox' && ans instanceof Set && ans.size>0) {
+    ans.forEach(i => Object.entries(q.options[i].scores).forEach(([c,v]) => pills[c]=(pills[c]||0)+v));
+  }
+
+  const pillBox = document.getElementById('tr-pills');
+  const entries = Object.entries(pills).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  if (entries.length===0) {
+    pillBox.innerHTML = '<span class="tr-none">Select an answer to see points</span>';
+  } else {
+    pillBox.innerHTML = entries.map(([c,v]) =>
+      `<span class="pill ${c}"><span class="pd"></span>${CAT_LABELS[c]} +${v}</span>`
+    ).join('');
+  }
 }
 
-// ── RESULTS ────────────────────────────────────────────────────────────────
-function showResults(totals) {
-  // Sort categories highest to lowest
-  const sorted = Object.entries(totals)
-    .sort((a, b) => b[1] - a[1]);
+// ─── CALCULATE & SHOW RESULTS ─────────────────────────────────────────────────
+function calcResults() {
+  const totals = {metabolic:0,nervous:0,hormonal:0,immune:0,mechanical:0};
+  QUESTIONS.forEach(q => {
+    const ans = answers[q.id];
+    if (q.type==='radio' && ans !== undefined) {
+      Object.entries(q.options[ans].scores).forEach(([c,v]) => totals[c] += v);
+    } else if (q.type==='checkbox' && ans instanceof Set) {
+      ans.forEach(i => Object.entries(q.options[i].scores).forEach(([c,v]) => totals[c] += v));
+    }
+  });
 
-  const maxScore = sorted[0][1] || 1; // avoid divide by zero
+  const sorted = Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  const maxScore = sorted[0][1] || 1;
 
   // Greeting
-  const greet = userName
-    ? `Here is your personalised Hair Health Snapshot, ${userName}. Based on your responses, these are the body systems most likely contributing to your hair concerns.`
+  document.getElementById('res-greeting').textContent = userName
+    ? `Here is your personalised snapshot, ${userName}. These are the body systems most likely contributing to your hair concerns.`
     : 'Based on your responses, these are the body systems most likely contributing to your hair concerns.';
-  document.getElementById('results-greeting').textContent = greet;
 
-  // Primary driver
-  const [primaryCat, primaryScore] = sorted[0];
-  const primaryMeta = CATEGORIES[primaryCat];
-  document.getElementById('primary-name').textContent = primaryMeta.name;
-  document.getElementById('primary-desc').textContent = primaryMeta.desc;
+  // Primary
+  const [pc,pv] = sorted[0];
+  document.getElementById('pri-nm').textContent   = CATEGORIES[pc].name;
+  document.getElementById('pri-desc').textContent = CATEGORIES[pc].desc;
 
-  // Secondary driver
-  const [secondaryCat, secondaryScore] = sorted[1];
-  const secondaryMeta = CATEGORIES[secondaryCat];
-  document.getElementById('secondary-name').textContent = secondaryMeta.name;
-  document.getElementById('secondary-desc').textContent = secondaryMeta.desc;
+  // Secondary
+  const [sc2,sv] = sorted[1];
+  document.getElementById('sec-nm').textContent   = CATEGORIES[sc2].name;
+  document.getElementById('sec-desc').textContent = CATEGORIES[sc2].desc;
 
-  // Supporting contributors (3rd–5th, only if score > 0)
-  const supporters = sorted.slice(2).filter(([,s]) => s > 0);
-  const supContainer = document.getElementById('supporting-cards');
-  document.getElementById('supporting-section').style.display = supporters.length ? 'block' : 'none';
-  supContainer.innerHTML = '';
-  supporters.forEach(([cat, score]) => {
-    const meta = CATEGORIES[cat];
-    const pct = Math.round((score / maxScore) * 100);
-    supContainer.innerHTML += `
-      <div class="driver-card supporting">
-        <div class="driver-badge">Supporting Contributor</div>
-        <div class="driver-name">${meta.name}</div>
-        <div class="driver-desc">${meta.desc}</div>
-        <div class="driver-score-bar"><div class="driver-score-fill" style="width:${pct}%"></div></div>
-      </div>`;
-  });
+  // Supporting
+  const supports = sorted.slice(2).filter(([,v])=>v>0);
+  const supSec = document.getElementById('sup-section');
+  supSec.style.display = supports.length ? 'block' : 'none';
+  document.getElementById('sup-cards').innerHTML = supports.map(([cat,val])=>`
+    <div class="dr-card support">
+      <div class="dr-badge">Supporting Contributor</div>
+      <div class="dr-nm">${CATEGORIES[cat].name}</div>
+      <div class="dr-desc">${CATEGORIES[cat].desc}</div>
+      <div class="dr-bar-t"><div class="dr-bar-f" style="width:${Math.round(val/maxScore*100)}%"></div></div>
+    </div>`).join('');
 
-  // Breakdown bars
-  const breakdownEl = document.getElementById('breakdown-rows');
-  breakdownEl.innerHTML = '';
-  sorted.forEach(([cat, score]) => {
-    const meta = CATEGORIES[cat];
-    const pct = Math.round((score / maxScore) * 100);
-    breakdownEl.innerHTML += `
-      <div class="breakdown-row">
-        <div class="breakdown-name">${meta.name}</div>
-        <div class="breakdown-track"><div class="breakdown-fill" data-pct="${pct}"></div></div>
-        <div class="breakdown-val">${score}</div>
-      </div>`;
-  });
+  // Breakdown
+  document.getElementById('bk-rows').innerHTML = sorted.map(([cat,val])=>`
+    <div class="bk-row">
+      <div class="bk-name">${CATEGORIES[cat].name}</div>
+      <div class="bk-track"><div class="bk-fill" style="width:${Math.round(val/maxScore*100)}%"></div></div>
+      <div class="bk-val">${val}</div>
+    </div>`).join('');
 
-  showScreen('results-screen');
+  show('res-page');
 
   // Animate bars after paint
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      // Primary/secondary bars
-      document.getElementById('primary-bar').style.width =
-        Math.round((primaryScore / maxScore) * 100) + '%';
-      document.getElementById('secondary-bar').style.width =
-        Math.round((secondaryScore / maxScore) * 100) + '%';
-      // Breakdown + supporting bars
-      document.querySelectorAll('.breakdown-fill, .driver-score-fill').forEach(el => {
-        if (el.dataset.pct) el.style.width = el.dataset.pct + '%';
-      });
-    }, 100);
-  });
+  requestAnimationFrame(()=>setTimeout(()=>{
+    document.getElementById('pri-bar').style.width = Math.round(pv/maxScore*100)+'%';
+    document.getElementById('sec-bar').style.width = Math.round(sv/maxScore*100)+'%';
+  },80));
 }
 
-// ── RETAKE ─────────────────────────────────────────────────────────────────
-function retake() {
-  answers = {};
-  currentIndex = 0;
-  showScreen('disclaimer-screen');
+// ─── BREAKDOWN TOGGLE ────────────────────────────────────────────────────────
+function toggleBreakdown() {
+  const el = document.getElementById('bk-detail');
+  const btn = document.getElementById('bk-btn');
+  if (el.style.display==='none') {
+    buildBreakdown();
+    el.style.display='block';
+    btn.textContent='Hide ▴';
+  } else {
+    el.style.display='none';
+    btn.textContent='Show ▾';
+  }
 }
+function buildBreakdown() {
+  let html='';
+  QUESTIONS.forEach(q => {
+    const ans = answers[q.id];
+    let labels=[], pts={};
+    if (q.type==='radio' && ans!==undefined) {
+      labels.push(q.options[ans].label);
+      Object.entries(q.options[ans].scores).forEach(([c,v])=>pts[c]=(pts[c]||0)+v);
+    } else if (q.type==='checkbox' && ans instanceof Set && ans.size>0) {
+      ans.forEach(i=>{
+        labels.push(q.options[i].label);
+        Object.entries(q.options[i].scores).forEach(([c,v])=>pts[c]=(pts[c]||0)+v);
+      });
+    }
+    const entries = Object.entries(pts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+    html+=`<div style="border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:9px;background:#fff">
+  <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--soft);margin-bottom:5px">Q${q.id}</div>
+  <div style="font-size:13px;color:var(--dark);margin-bottom:8px;line-height:1.4">${q.text}</div>
+  ${labels.length ? `<div style="font-size:12px;color:var(--soft);margin-bottom:6px">Selected: <em style="color:var(--text)">${labels.join(', ')}</em></div>` : ''}
+  <div style="display:flex;flex-wrap:wrap;gap:4px">${
+    entries.length===0
+      ? '<span style="font-size:11px;color:#baa98a">Zero points — no contribution</span>'
+      : entries.map(([c,v])=>`<span class="pill ${c}"><span class="pd"></span>${CAT_LABELS[c]} +${v}</span>`).join('')
+  }</div>
+</div>`;
+  });
+  // Final totals
+  const totals = {metabolic:0,nervous:0,hormonal:0,immune:0,mechanical:0};
+  QUESTIONS.forEach(q=>{
+    const ans=answers[q.id];
+    if(q.type==='radio'&&ans!==undefined) Object.entries(q.options[ans].scores).forEach(([c,v])=>totals[c]+=v);
+    else if(q.type==='checkbox'&&ans instanceof Set) ans.forEach(i=>Object.entries(q.options[i].scores).forEach(([c,v])=>totals[c]+=v));
+  });
+  html+=`<div style="background:var(--dark);border-radius:10px;padding:18px 22px;margin-top:6px">
+  <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500">Verified Final Totals</div>
+  ${Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`
+  <div style="display:flex;justify-content:space-between;font-size:13px;color:#fff;margin-bottom:5px">
+    <span>${CAT_LABELS[c]}</span><span style="color:var(--gold);font-weight:500">${v} pts</span>
+  </div>`).join('')}
+</div>`;
+  document.getElementById('bk-detail').innerHTML=html;
+}
+
+// ─── RETAKE ──────────────────────────────────────────────────────────────────
+function retake() { ci=0; answers={}; show('disc-page'); }
 </script>
 </body>
 </html>
