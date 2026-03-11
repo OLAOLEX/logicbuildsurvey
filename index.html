@@ -3,1275 +3,1231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Emotion Index</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<title>MsKimTheStylist — Hair Health Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --burnt-orange: #ff7d20;
-    --orange-dim: #cc6219;
-    --orange-glow: rgba(255,125,32,0.18);
-    --black: #0a0a0a;
-    --white: #ffffff;
-    --off-white: #f7f5f2;
-    --mid-grey: #888;
-    --light-grey: #d4d0cb;
-    --card-bg: #121212;
-    --border: rgba(255,125,32,0.25);
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'Calibri Light', 'Calibri', 'Segoe UI', sans-serif;
-  }
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --cream: #fdf8f0;
+  --dark: #1a1410;
+  --dark-mid: #2d2218;
+  --text: #3d2e1e;
+  --text-soft: #7a6555;
+  --border: rgba(201,168,76,0.25);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 10px;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
+/* Background texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
 
-  .bg-gradient {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 50% at 20% 80%, rgba(255,125,32,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 40% 60% at 80% 20%, rgba(255,125,32,0.04) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
+/* ── SCREENS ── */
+.screen { position: relative; z-index: 1; display: none; }
+.screen.active { display: block; }
 
-  .screen {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-  }
-  .screen.hidden { display: none; }
+/* ── DISCLAIMER ── */
+#disclaimer-screen {
+  min-height: 100vh;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+#disclaimer-screen.active { display: flex; }
 
-  /* WELCOME */
-  #welcome-screen { text-align: center; }
-  .logo-mark {
-    width: 64px; height: 64px;
-    border: 1.5px solid var(--burnt-orange);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 32px;
-    animation: pulse-ring 3s ease infinite;
-  }
-  .logo-mark svg { width: 28px; height: 28px; fill: var(--burnt-orange); }
-  @keyframes pulse-ring {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,125,32,0); }
-    50% { box-shadow: 0 0 0 8px rgba(255,125,32,0.1); }
-  }
-  .welcome-label {
-    font-size: 11px;
-    font-weight: 300;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--burnt-orange);
-    margin-bottom: 18px;
-  }
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(42px, 7vw, 76px);
-    font-weight: 300;
-    line-height: 1.05;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-  h1 em { font-style: italic; color: var(--burnt-orange); }
-  .welcome-subtitle {
-    font-family: var(--font-display);
-    font-size: clamp(16px, 2.5vw, 22px);
-    font-weight: 300;
-    font-style: italic;
-    color: var(--mid-grey);
-    margin-bottom: 32px;
-  }
-  .welcome-desc {
-    max-width: 520px;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.75;
-    color: #aaa;
-    margin: 0 auto 12px;
-  }
-  .meta-pills {
-    display: flex; gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 24px 0 40px;
-  }
-  .meta-pill {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 300;
-    color: #999;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .meta-pill span { color: var(--burnt-orange); font-size: 14px; }
+.disc-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 640px; width: 100%;
+  padding: 48px 40px;
+  box-shadow: 0 4px 40px rgba(201,168,76,0.1);
+}
+.disc-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.disc-logo .brand {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.disc-logo .title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-top: 4px;
+}
+.disc-divider {
+  width: 50px; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 20px auto;
+}
+.disc-intro {
+  font-size: 14px; line-height: 1.8;
+  color: var(--text-soft); text-align: center;
+  margin-bottom: 28px;
+}
+.disc-box {
+  background: var(--gold-dim);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.disc-box p {
+  font-size: 13px; line-height: 1.9;
+  color: var(--text);
+}
+.disc-box ul {
+  list-style: none; margin: 12px 0;
+}
+.disc-box ul li {
+  font-size: 13px; line-height: 1.8;
+  color: var(--text); padding-left: 18px;
+  position: relative;
+}
+.disc-box ul li::before {
+  content: '—';
+  position: absolute; left: 0;
+  color: var(--gold); font-size: 11px;
+}
+.disc-box .disc-note {
+  font-size: 12px; color: var(--text-soft);
+  margin-top: 14px; line-height: 1.7;
+}
+.disc-consent {
+  font-size: 12.5px; line-height: 1.7;
+  color: var(--text-soft); text-align: center;
+  margin-bottom: 28px;
+}
+.disc-consent strong { color: var(--text); }
 
-  .btn-primary {
-    background: var(--burnt-orange);
-    color: var(--black);
-    border: none;
-    padding: 16px 48px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn-primary::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: rgba(255,255,255,0.15);
-    transform: translateX(-100%);
-    transition: transform 0.35s ease;
-  }
-  .btn-primary:hover::after { transform: translateX(0); }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(255,125,32,0.35); }
+/* ── NAME/EMAIL COLLECT ── */
+.disc-fields {
+  display: grid; gap: 14px;
+  margin-bottom: 28px;
+}
+.disc-fields input {
+  width: 100%;
+  background: #faf7f2;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.disc-fields input:focus {
+  border-color: var(--gold);
+  background: #fff;
+}
+.disc-fields input::placeholder { color: #baa98a; }
 
-  /* QUESTION SCREEN */
-  #question-screen {
-    padding: 20px 20px 40px;
-    justify-content: flex-start;
-  }
-  .q-header {
-    width: 100%;
-    max-width: 680px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-    padding-top: 12px;
-  }
-  .q-progress-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .q-counter {
-    font-size: 12px;
-    font-weight: 300;
-    color: var(--mid-grey);
-    white-space: nowrap;
-  }
-  .q-counter strong { color: var(--white); font-weight: 400; }
-  .progress-bar {
-    flex: 1;
-    height: 2px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 1px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--burnt-orange), #ffaa66);
-    border-radius: 1px;
-    transition: width 0.5s ease;
-  }
+/* ── BUTTONS ── */
+.btn-gold {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--dark);
+  border: none;
+  border-radius: 8px;
+  padding: 16px 32px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(201,168,76,0.35);
+}
+.btn-ghost {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 
-  /* TIMER */
-  .timer-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-left: 20px;
-  }
-  .timer-circle {
-    position: relative;
-    width: 52px; height: 52px;
-  }
-  .timer-circle svg {
-    position: absolute;
-    top: 0; left: 0;
-    transform: rotate(-90deg);
-  }
-  .timer-circle svg circle { fill: none; stroke-width: 2.5; stroke-linecap: round; }
-  .timer-track { stroke: rgba(255,255,255,0.07); }
-  .timer-fill {
-    stroke: var(--burnt-orange);
-    stroke-dasharray: 138;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
-  }
-  .timer-number {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 300;
-    color: var(--white);
-    transition: color 0.5s ease;
-  }
-  .timer-label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--mid-grey);
-    font-weight: 300;
-  }
+/* ── QUIZ LAYOUT ── */
+#quiz-screen {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
 
-  /* FACTOR BADGE */
-  .factor-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,125,32,0.08);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 4px 14px;
-    font-size: 11px;
-    font-weight: 300;
-    color: var(--burnt-orange);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-  .factor-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--burnt-orange);
-    opacity: 0.8;
-  }
-  .q-text { width: 100%; max-width: 680px; }
-  .q-number {
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-style: italic;
-    color: rgba(255,125,32,0.6);
-    margin-bottom: 10px;
-    font-weight: 300;
-  }
-  .q-question {
-    font-family: var(--font-display);
-    font-size: clamp(20px, 3.5vw, 30px);
-    font-weight: 300;
-    line-height: 1.45;
-    color: var(--white);
-    margin-bottom: 36px;
-  }
+/* Progress */
+.quiz-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.progress-track {
+  flex: 1; height: 3px;
+  background: rgba(201,168,76,0.15);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+.progress-label {
+  font-size: 12px; font-weight: 400;
+  color: var(--text-soft); white-space: nowrap;
+}
 
-  /* OPTIONS */
-  .options-grid {
-    width: 100%;
-    max-width: 680px;
-    display: grid;
-    gap: 10px;
-  }
-  .options-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .options-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .options-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
-  .options-grid.cols-5 { grid-template-columns: repeat(1, 1fr); }
-  @media (min-width: 560px) {
-    .options-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-    .options-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
-  }
-  .option-btn {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px;
-    padding: 18px 16px;
-    color: var(--white);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 300;
-    cursor: pointer;
-    transition: all 0.22s ease;
-    text-align: center;
-    line-height: 1.4;
-    position: relative;
-    overflow: hidden;
-  }
-  .option-btn::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,125,32,0.08), transparent);
-    opacity: 0;
-    transition: opacity 0.22s ease;
-  }
-  .option-btn:hover {
-    border-color: var(--burnt-orange);
-    color: var(--white);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(255,125,32,0.15);
-  }
-  .option-btn:hover::before { opacity: 1; }
-  .option-btn.selected {
-    background: var(--burnt-orange);
-    border-color: var(--burnt-orange);
-    color: var(--black);
-    font-weight: 700;
-  }
-  .option-btn.selected::before { opacity: 0; }
+/* Section header */
+.section-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-dim);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 16px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.section-chip::before {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--gold);
+}
 
-  .skip-row {
-    width: 100%;
-    max-width: 680px;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  .btn-skip {
-    background: none; border: none;
-    font-size: 12px;
-    font-weight: 300;
-    color: rgba(255,255,255,0.3);
-    cursor: pointer;
-    letter-spacing: 1px;
-    padding: 4px 0;
-    transition: color 0.2s;
-  }
-  .btn-skip:hover { color: rgba(255,255,255,0.6); }
+/* Question card */
+.q-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 40px;
+  box-shadow: 0 2px 20px rgba(201,168,76,0.06);
+  animation: fadeUp 0.35s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  @keyframes timeout-flash {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-  .timeout-flash { animation: timeout-flash 0.4s ease 3; }
+.q-num {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 3vw, 23px);
+  font-weight: 400; line-height: 1.45;
+  color: var(--dark); margin-bottom: 28px;
+}
 
-  @keyframes slide-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .slide-in { animation: slide-in 0.4s ease forwards; }
+/* Type badge */
+.q-type-badge {
+  display: inline-block;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; font-weight: 500;
+  color: var(--text-soft);
+  background: #f5f0e8;
+  border-radius: 4px; padding: 2px 8px;
+  margin-bottom: 20px;
+}
 
-  /* RESULTS */
-  #results-screen { padding: 40px 20px 60px; }
-  .results-wrap { width: 100%; max-width: 720px; text-align: center; }
-  .results-eyebrow {
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--burnt-orange);
-    margin-bottom: 20px;
-    font-weight: 300;
-  }
-  .archetype-display {
-    font-family: var(--font-display);
-    font-size: 44px;
-    font-weight: 300;
-    line-height: 1.15;
-    margin-bottom: 10px;
-    color: var(--white);
-  }
-  .archetype-display em { font-style: italic; color: var(--burnt-orange); }
-  .archetype-desc {
-    font-size: 15px;
-    font-weight: 300;
-    color: #999;
-    line-height: 1.8;
-    max-width: 520px;
-    margin: 0 auto 48px;
-  }
-  .score-section { margin-bottom: 48px; }
-  .overall-score-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--mid-grey);
-    margin-bottom: 12px;
-    font-weight: 300;
-  }
-  .overall-score-value {
-    font-family: var(--font-display);
-    font-size: 100px;
-    font-weight: 300;
-    line-height: 1;
-    color: var(--white);
-    display: inline-block;
-    margin-bottom: 4px;
-    min-height: 120px;
-  }
-  .overall-score-value::after {
-    content: '/100';
-    font-size: 28px;
-    color: var(--mid-grey);
-    margin-left: 4px;
-    vertical-align: baseline;
-    line-height: 1.8;
-    display: inline-block;
-  }
-  .score-bar-outer {
-    width: 100%; max-width: 500px;
-    height: 4px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 2px;
-    margin: 16px auto 40px;
-    overflow: hidden;
-  }
-  .score-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #f07020, var(--burnt-orange), #ffaa55);
-    border-radius: 2px;
-    width: 0%;
-    transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .sub-scores {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-  @media (max-width: 560px) { .sub-scores { grid-template-columns: 1fr; } }
-  .sub-score-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 6px;
-    padding: 24px 16px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .sub-score-card::before {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--burnt-orange);
-    transform: scaleX(0);
-    transition: transform 1s ease;
-    transform-origin: left;
-  }
-  .sub-score-card.animate::before { transform: scaleX(1); }
-  .sub-score-name {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--mid-grey);
-    margin-bottom: 8px;
-    font-weight: 300;
-  }
-  .sub-score-role {
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-style: italic;
-    color: rgba(255,125,32,0.7);
-    margin-bottom: 14px;
-  }
-  .sub-score-val {
-    font-family: var(--font-display);
-    font-size: 42px;
-    font-weight: 300;
-    color: var(--white);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-  .sub-score-bar {
-    width: 80%; height: 2px;
-    background: rgba(255,255,255,0.06);
-    margin: 0 auto;
-    border-radius: 1px;
-    overflow: hidden;
-  }
-  .sub-score-fill {
-    height: 100%;
-    background: var(--burnt-orange);
-    width: 0%;
-    transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .archetype-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
-    text-align: left;
-  }
-  .archetype-table th {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--mid-grey);
-    font-weight: 300;
-    padding: 10px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
-  .archetype-table td {
-    padding: 12px 14px;
-    font-size: 13px;
-    font-weight: 300;
-    color: #bbb;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    line-height: 1.5;
-  }
-  .archetype-table tr.current td {
-    color: var(--white);
-    background: rgba(255,125,32,0.07);
-    border-left: 2px solid var(--burnt-orange);
-  }
-  .archetype-table tr.current td:first-child { padding-left: 12px; }
-  .results-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 8px;
-  }
-  .btn-secondary {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.7);
-    padding: 12px 32px;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 300;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.25s ease;
-  }
-  .btn-secondary:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
-  .divider {
-    width: 40px; height: 1px;
-    background: rgba(255,125,32,0.4);
-    margin: 36px auto;
-  }
+/* Options */
+.options-list { display: flex; flex-direction: column; gap: 10px; }
 
-  /* COUNTDOWN */
-  #countdown-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    backdrop-filter: blur(8px);
-  }
-  #countdown-overlay.hidden { display: none; }
-  .countdown-number {
-    font-family: var(--font-display);
-    font-size: 140px;
-    font-weight: 300;
-    color: var(--white);
-    animation: count-pop 0.9s ease infinite;
-  }
-  @keyframes count-pop {
-    0% { transform: scale(0.8); opacity: 0.3; }
-    30% { transform: scale(1); opacity: 1; }
-    70% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(1.15); opacity: 0; }
-  }
+.opt-btn {
+  display: flex; align-items: center; gap: 14px;
+  background: #faf7f2;
+  border: 1.5px solid rgba(201,168,76,0.2);
+  border-radius: 10px;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 14px; font-weight: 300;
+  color: var(--text);
+  width: 100%;
+}
+.opt-btn:hover {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  transform: translateX(3px);
+}
+.opt-btn.selected {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(232,201,122,0.1));
+  color: var(--dark);
+  font-weight: 400;
+}
+.opt-indicator {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201,168,76,0.4);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.opt-btn.checkbox .opt-indicator { border-radius: 5px; }
+.opt-btn.selected .opt-indicator {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.opt-btn.selected .opt-indicator::after {
+  content: '✓';
+  font-size: 11px; color: #fff; font-weight: 700;
+}
+.opt-btn.radio.selected .opt-indicator::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%; background: #fff;
+  display: block;
+}
 
-  /* LOADING */
-  #loading-screen { text-align: center; }
-  .calc-label {
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--burnt-orange);
-    margin-bottom: 20px;
-    font-weight: 300;
-  }
-  .calc-title {
-    font-family: var(--font-display);
-    font-size: 40px;
-    font-weight: 300;
-    margin-bottom: 40px;
-    color: var(--white);
-  }
-  .calc-dots { display: flex; gap: 10px; justify-content: center; }
-  .calc-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--burnt-orange);
-    animation: dot-bounce 1.4s ease infinite;
-  }
-  .calc-dot:nth-child(2) { animation-delay: 0.2s; }
-  .calc-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot-bounce {
-    0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
-    40% { transform: translateY(-12px); opacity: 1; }
-  }
+/* Nav */
+.q-nav {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 28px;
+}
+.q-nav-hint {
+  font-size: 12px; color: var(--text-soft);
+}
+
+/* ── RESULTS SCREEN ── */
+#results-screen {
+  max-width: 760px; margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.results-header { text-align: center; margin-bottom: 48px; }
+.results-eyebrow {
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold);
+  font-weight: 500; margin-bottom: 12px;
+}
+.results-name {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 600; color: var(--dark);
+  margin-bottom: 8px;
+}
+.results-name em { font-style: italic; color: var(--gold); }
+.results-subtitle {
+  font-size: 14px; color: var(--text-soft); line-height: 1.7;
+}
+.results-divider {
+  width: 50px; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 20px auto;
+}
+
+/* Driver cards */
+.driver-section { margin-bottom: 40px; }
+.driver-label {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-soft); margin-bottom: 16px;
+}
+
+.driver-card {
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 12px;
+  position: relative; overflow: hidden;
+}
+.driver-card.primary {
+  background: linear-gradient(135deg, var(--dark), var(--dark-mid));
+  border: 1px solid rgba(201,168,76,0.3);
+}
+.driver-card.secondary {
+  background: #fff;
+  border: 1.5px solid var(--gold);
+}
+.driver-card.supporting {
+  background: #faf7f2;
+  border: 1px solid var(--border);
+}
+.driver-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--gold), var(--gold-light));
+}
+
+.driver-badge {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px;
+}
+.driver-card.primary .driver-badge { color: var(--gold-light); }
+
+.driver-name {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 600;
+  margin-bottom: 6px;
+}
+.driver-card.primary .driver-name { color: #fff; }
+.driver-card.secondary .driver-name,
+.driver-card.supporting .driver-name { color: var(--dark); }
+
+.driver-desc {
+  font-size: 13px; line-height: 1.75;
+}
+.driver-card.primary .driver-desc { color: rgba(255,255,255,0.65); }
+.driver-card.secondary .driver-desc,
+.driver-card.supporting .driver-desc { color: var(--text-soft); }
+
+.driver-score-bar {
+  margin-top: 16px; height: 4px;
+  background: rgba(255,255,255,0.1); border-radius: 2px;
+  overflow: hidden;
+}
+.driver-card.secondary .driver-score-bar,
+.driver-card.supporting .driver-score-bar {
+  background: rgba(201,168,76,0.15);
+}
+.driver-score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px; width: 0%;
+  transition: width 1.4s cubic-bezier(0.25,1,0.5,1);
+}
+
+/* All 5 breakdown */
+.breakdown-section { margin-bottom: 40px; }
+.breakdown-title {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-soft); margin-bottom: 20px;
+}
+.breakdown-row {
+  display: flex; align-items: center;
+  gap: 14px; margin-bottom: 14px;
+}
+.breakdown-name {
+  width: 160px; flex-shrink: 0;
+  font-size: 13px; font-weight: 400;
+  color: var(--text);
+}
+.breakdown-track {
+  flex: 1; height: 6px;
+  background: rgba(201,168,76,0.12);
+  border-radius: 3px; overflow: hidden;
+}
+.breakdown-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 3px; width: 0%;
+  transition: width 1.2s cubic-bezier(0.25,1,0.5,1);
+}
+.breakdown-val {
+  width: 36px; flex-shrink: 0;
+  font-size: 13px; font-weight: 500;
+  color: var(--gold); text-align: right;
+}
+
+/* Disclaimer note */
+.results-disclaimer {
+  background: #f5f0e8;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  font-size: 12px; line-height: 1.8;
+  color: var(--text-soft); margin-bottom: 32px;
+}
+
+/* Retake */
+.results-actions { text-align: center; }
+
+/* ── LOADING ── */
+#loading-screen {
+  min-height: 100vh;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+}
+#loading-screen.active { display: flex; }
+.loading-title {
+  font-family: var(--font-display);
+  font-size: 28px; color: var(--dark);
+  margin-bottom: 8px;
+}
+.loading-sub { font-size: 14px; color: var(--text-soft); margin-bottom: 32px; }
+.loading-dots { display: flex; gap: 10px; justify-content: center; }
+.loading-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold);
+  animation: dotBounce 1.4s ease infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce {
+  0%,80%,100% { transform: translateY(0); opacity: 0.3; }
+  40% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 560px) {
+  .q-card { padding: 24px 20px; }
+  .disc-card { padding: 32px 24px; }
+  .driver-card { padding: 22px 22px; }
+  .breakdown-name { width: 120px; font-size: 12px; }
+}
 </style>
 </head>
 <body>
 
-<div class="bg-gradient"></div>
-
-<!-- COUNTDOWN OVERLAY -->
-<div id="countdown-overlay" class="hidden" aria-live="assertive">
-  <div class="countdown-number" id="countdown-num">3</div>
-</div>
-
-<!-- SCREEN 1: WELCOME -->
-<div id="welcome-screen" class="screen">
-  <div class="logo-mark">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-  </div>
-  <div class="welcome-label">Psychometric Financial Assessment</div>
-  <h1>Financial<br><em>Emotion Index</em></h1>
-  <div class="welcome-subtitle">A reflective journey into your relationship with money</div>
-  <p class="welcome-desc">This assessment explores how your background, social environment, and media exposure shape your feelings about saving and spending. There are no right or wrong answers — only your truth.</p>
-  <div class="meta-pills">
-    <div class="meta-pill"><span>⏱</span> 10–15 minutes</div>
-    <div class="meta-pill"><span>❓</span> 30 questions</div>
-    <div class="meta-pill"><span>🔒</span> Completely confidential</div>
-  </div>
-  <button class="btn-primary" onclick="startCountdown()">Begin Your Journey</button>
-</div>
-
-<!-- SCREEN 2: QUESTION -->
-<div id="question-screen" class="screen hidden">
-  <div class="q-header">
-    <div class="q-progress-wrap">
-      <div class="q-counter">Question <strong id="q-num">1</strong> of 30</div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
+<!-- ══════════════════════════════════════════
+     SCREEN 1: DISCLAIMER + CONSENT
+══════════════════════════════════════════ -->
+<div id="disclaimer-screen" class="screen active">
+  <div class="disc-card">
+    <div class="disc-logo">
+      <div class="brand">MsKimTheStylist</div>
+      <div class="title">Hair Health Audit</div>
     </div>
-    <div class="timer-wrap">
-      <div class="timer-circle" role="timer" aria-label="Time remaining">
-        <svg width="52" height="52" viewBox="0 0 52 52">
-          <circle class="timer-track" cx="26" cy="26" r="22"/>
-          <circle class="timer-fill" id="timer-fill" cx="26" cy="26" r="22"/>
-        </svg>
-        <div class="timer-number" id="timer-num">20</div>
-      </div>
-      <div class="timer-label">seconds</div>
-    </div>
-  </div>
+    <div class="disc-divider"></div>
 
-  <div class="q-text slide-in" id="q-content">
-    <div class="factor-badge" id="factor-badge">Background</div>
-    <div class="q-number" id="q-number-label">Question 01</div>
-    <div class="q-question" id="q-question">Question text here</div>
-    <div class="options-grid" id="options-grid"></div>
-    <div class="skip-row">
-      <button class="btn-skip" onclick="skipQuestion()">Skip question →</button>
+    <p class="disc-intro">
+      This audit is intended for educational and informational purposes only.
+      It is designed to identify patterns and possible contributors to hair
+      and scalp concerns from a holistic, full-body perspective.
+    </p>
+
+    <div class="disc-box">
+      <p><strong>This audit:</strong></p>
+      <ul>
+        <li>Does not diagnose medical conditions</li>
+        <li>Does not replace medical advice, diagnosis, or treatment</li>
+        <li>Is not intended to treat, cure, or prevent disease</li>
+      </ul>
+      <p class="disc-note">
+        Results are based on the information you provide and are meant to support awareness
+        and informed decision-making. Any recommendations offered are for educational
+        purposes and should not be interpreted as medical advice.<br><br>
+        If you are experiencing severe symptoms or have a known medical condition,
+        please consult with a qualified healthcare professional.
+      </p>
     </div>
+
+    <div class="disc-fields">
+      <input type="text"  id="user-name"  placeholder="Your first name" autocomplete="given-name">
+      <input type="email" id="user-email" placeholder="Your email address" autocomplete="email">
+    </div>
+
+    <p class="disc-consent">
+      By continuing, you acknowledge that you understand and agree to the above
+      and consent to receive your <strong>Hair Health Snapshot</strong> via email.
+    </p>
+
+    <button class="btn-gold" onclick="startAudit()">Begin My Hair Health Audit →</button>
   </div>
 </div>
 
-<!-- SCREEN 3: CALCULATING -->
-<div id="loading-screen" class="screen hidden">
-  <div class="calc-label">Processing your responses</div>
-  <div class="calc-title">Mapping your<br><em style="font-family:var(--font-display);font-style:italic;color:var(--burnt-orange)">financial emotions</em></div>
-  <div class="calc-dots">
-    <div class="calc-dot"></div>
-    <div class="calc-dot"></div>
-    <div class="calc-dot"></div>
+<!-- ══════════════════════════════════════════
+     SCREEN 2: QUIZ
+══════════════════════════════════════════ -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-topbar">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-label" id="progress-label">1 of 35</div>
+  </div>
+
+  <div class="section-chip" id="section-chip">Section 1</div>
+
+  <div class="q-card" id="q-card">
+    <!-- Rendered by JS -->
+  </div>
+
+  <div class="q-nav">
+    <button class="btn-ghost" id="btn-back" onclick="goBack()">← Back</button>
+    <span class="q-nav-hint" id="q-nav-hint"></span>
+    <button class="btn-gold" id="btn-next" onclick="goNext()" style="width:auto;padding:12px 28px;">Next →</button>
   </div>
 </div>
 
-<!-- SCREEN 4: RESULTS -->
-<div id="results-screen" class="screen hidden">
-  <div class="results-wrap slide-in">
-    <div class="results-eyebrow">Your Financial Emotion Index</div>
-    <div class="archetype-display" id="archetype-name">Security-Anchored Saver</div>
-    <p class="archetype-desc" id="archetype-desc">Safety and predictability drive most of your financial decisions.</p>
-
-    <div class="score-section">
-      <div class="overall-score-label">Overall Score</div>
-      <div class="overall-score-value" id="overall-score">0</div>
-      <div class="score-bar-outer">
-        <div class="score-bar-fill" id="overall-bar"></div>
-      </div>
-    </div>
-
-    <div class="sub-scores">
-      <div class="sub-score-card" id="card-background">
-        <div class="sub-score-name">Background</div>
-        <div class="sub-score-role">The Anchor</div>
-        <div class="sub-score-val" id="bg-score">—</div>
-        <div class="sub-score-bar"><div class="sub-score-fill" id="bg-bar"></div></div>
-      </div>
-      <div class="sub-score-card" id="card-social">
-        <div class="sub-score-name">Social Cues</div>
-        <div class="sub-score-role">The Pulse</div>
-        <div class="sub-score-val" id="sc-score">—</div>
-        <div class="sub-score-bar"><div class="sub-score-fill" id="sc-bar"></div></div>
-      </div>
-      <div class="sub-score-card" id="card-media">
-        <div class="sub-score-name">Media</div>
-        <div class="sub-score-role">The Noise</div>
-        <div class="sub-score-val" id="md-score">—</div>
-        <div class="sub-score-bar"><div class="sub-score-fill" id="md-bar"></div></div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div style="margin-bottom:20px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--mid-grey);font-weight:300;">Emotional Orientation Spectrum</div>
-    <table class="archetype-table" id="archetype-table">
-      <thead>
-        <tr><th>Range</th><th>Orientation</th><th>Description</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div class="divider"></div>
-    <div class="results-actions">
-      <button class="btn-primary" onclick="restartAssessment()">Retake Assessment</button>
-      <button class="btn-secondary" onclick="window.print()">Print Results</button>
-    </div>
+<!-- ══════════════════════════════════════════
+     SCREEN 3: CALCULATING
+══════════════════════════════════════════ -->
+<div id="loading-screen" class="screen">
+  <div class="loading-title">Analysing your responses…</div>
+  <div class="loading-sub">Mapping your hair health snapshot</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     SCREEN 4: RESULTS
+══════════════════════════════════════════ -->
+<div id="results-screen" class="screen">
+  <div class="results-header">
+    <div class="results-eyebrow">Your Hair Health Snapshot</div>
+    <div class="results-name">Your <em>Body System Profile</em></div>
+    <div class="results-divider"></div>
+    <p class="results-subtitle" id="results-greeting"></p>
+  </div>
+
+  <!-- Primary + Secondary drivers -->
+  <div class="driver-section">
+    <div class="driver-label">Primary &amp; Secondary Drivers</div>
+    <div id="primary-card" class="driver-card primary">
+      <div class="driver-badge">Primary Driver</div>
+      <div class="driver-name" id="primary-name"></div>
+      <div class="driver-desc" id="primary-desc"></div>
+      <div class="driver-score-bar"><div class="driver-score-fill" id="primary-bar"></div></div>
+    </div>
+    <div id="secondary-card" class="driver-card secondary">
+      <div class="driver-badge">Secondary Driver</div>
+      <div class="driver-name" id="secondary-name"></div>
+      <div class="driver-desc" id="secondary-desc"></div>
+      <div class="driver-score-bar"><div class="driver-score-fill" id="secondary-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- Supporting contributors -->
+  <div class="driver-section" id="supporting-section">
+    <div class="driver-label">Supporting Contributors</div>
+    <div id="supporting-cards"></div>
+  </div>
+
+  <!-- Full breakdown -->
+  <div class="breakdown-section">
+    <div class="breakdown-title">All Five Body Systems</div>
+    <div id="breakdown-rows"></div>
+  </div>
+
+  <div class="results-disclaimer">
+    <strong>A note on your results:</strong> This audit is a pattern-recognition tool designed to help guide you
+    toward a deeper conversation about your hair health. Hair concerns are almost always multifactorial —
+    your body systems work together, and the scores above reflect layered contributors, not a single cause.
+    These results are for educational purposes only and do not constitute medical advice.
+  </div>
+
+  <div class="results-actions">
+    <button class="btn-gold" onclick="retake()" style="width:auto;padding:14px 36px;">Retake Audit</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
 <script>
-// ─────────────────────────────────────────────
-// QUESTIONS — ordered exactly as per spreadsheet
-// Options and scores aligned to Scale tab
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// THE CORE LESSON FROM THE JOTFORM SAGA:
+// All scoring is done in pure JavaScript. Every option has ONLY the points
+// explicitly assigned to it in the doc. "None"/zero options contribute nothing.
+// Radio = exactly one selection fires. Checkbox = each selected option fires
+// independently. No accumulator bleed. No "is filled" triggers. Pure equality.
+// ─────────────────────────────────────────────────────────────────────────────
+
 const QUESTIONS = [
-  {
-    id: 1, factor: 'Media',
-    text: 'Which news headline would move you more emotionally — "market crash" or "bull market"?',
-    options: [
-      {label:'Market Crash', score:1},
-      {label:'Bull Market', score:2}
-    ]
-  },
-  {
-    id: 2, factor: 'Social Cues',
-    text: 'How do you feel when splitting the bill to match others at a restaurant?',
-    options: [
-      {label:'Discomfort', score:1},
-      {label:'Irritation', score:2},
-      {label:'Relief', score:3},
-      {label:'Ease', score:4}
-    ]
-  },
-  {
-    id: 3, factor: 'Media',
-    text: 'Shows like Geordie Shore, The Royle Family, Coronation Street, or Only Fools and Horses often portray working-class life with humour and grit. Which one feels most attractive?',
-    options: [
-      {label:'Royle Family', score:1},
-      {label:'Coronation Street', score:2},
-      {label:'Only Fools and Horses', score:3},
-      {label:'Geordie Shore', score:4}
-    ]
-  },
-  {
-    id: 4, factor: 'Social Cues',
-    text: 'What goes through your mind when someone hangs back during a drinks round?',
-    options: [
-      {label:'Judgement', score:1},
-      {label:'Suspicion', score:2},
-      {label:'Recognition', score:3},
-      {label:'Empathy', score:4}
-    ]
-  },
-  {
-    id: 5, factor: 'Background',
-    text: 'How did your first paid job shape your sense of what your time and effort were worth?',
-    options: [
-      {label:'Lots', score:1},
-      {label:'So So', score:2},
-      {label:'Very little', score:3}
-    ]
-  },
-  {
-    id: 6, factor: 'Background',
-    text: 'What did Christmas feel like financially in your home — abundance, stress, comparison, magic, or pressure?',
-    options: [
-      {label:'Pressure', score:1},
-      {label:'Stress', score:2},
-      {label:'Comparison', score:3},
-      {label:'Magic', score:4},
-      {label:'Abundance', score:5}
-    ]
-  },
-  {
-    id: 7, factor: 'Media',
-    text: 'When you watched Location, Location, Location, did you ever feel that owning a home was a test of adulthood?',
-    options: [
-      {label:'No', score:1},
-      {label:'Yes', score:2}
-    ]
-  },
-  {
-    id: 8, factor: 'Social Cues',
-    text: 'How did you feel giving a noticeably cheap birthday present?',
-    options: [
-      {label:'Relief', score:1},
-      {label:'Self-Consciousness', score:2},
-      {label:'Guilt', score:3},
-      {label:'Embarrassment', score:4}
-    ]
-  },
-  {
-    id: 9, factor: 'Background',
-    text: 'How did your future earning potential influence your choice of GCSE subjects?',
-    options: [
-      {label:'Lots', score:1},
-      {label:'So So', score:2},
-      {label:'Very little', score:3}
-    ]
-  },
-  {
-    id: 10, factor: 'Media',
-    text: 'When you saw the luxury in Hello! magazine, what emotions surfaced first?',
-    options: [
-      {label:'Curiosity', score:1},
-      {label:'Admiration', score:2},
-      {label:'Envy', score:3},
-      {label:'Inadequate', score:4}
-    ]
-  },
-  {
-    id: 11, factor: 'Social Cues',
-    text: 'How did comparing neighbours\' cars, holidays, weddings, or pets shape your expectations of a "normal" life?',
-    options: [
-      {label:'Gloomy', score:1},
-      {label:'Dreary', score:2},
-      {label:'Glamourous', score:3},
-      {label:'Dreamy', score:4}
-    ]
-  },
-  {
-    id: 12, factor: 'Background',
-    text: 'Growing up, did you feel your family lived in scarcity or abundance?',
-    options: [
-      {label:'Scarcity', score:1},
-      {label:'Abundance', score:2}
-    ]
-  },
-  {
-    id: 13, factor: 'Media',
-    text: 'How often do you feel you\'re "missing out" financially compared to others you see online or on TV?',
-    options: [
-      {label:'Never', score:1},
-      {label:'Annually', score:2},
-      {label:'Quarterly', score:3},
-      {label:'Monthly', score:4},
-      {label:'Weekly', score:5}
-    ]
-  },
-  {
-    id: 14, factor: 'Background',
-    text: 'Looking back at moments like lunchbox envy or noticing who had hot school dinners, how did those experiences shape your sense of fairness or status?',
-    options: [
-      {label:'Lots', score:1},
-      {label:'So so', score:2},
-      {label:'Very little', score:3}
-    ]
-  },
-  {
-    id: 15, factor: 'Social Cues',
-    text: 'What emotions come up when colleagues organise yet another gift collection?',
-    options: [
-      {label:'Overkill', score:1},
-      {label:'Resentment', score:2},
-      {label:'Belonging', score:3},
-      {label:'Obligation', score:4},
-      {label:'Generosity', score:5}
-    ]
-  },
-  {
-    id: 16, factor: 'Media',
-    text: 'When you encountered rags-to-riches stories (like Annie or Alan Sugar), did they give you hope or feel unrealistic?',
-    options: [
-      {label:'Hope', score:1},
-      {label:'Unrealistic', score:2}
-    ]
-  },
-  {
-    id: 17, factor: 'Background',
-    text: 'How did your cultural or religious background shape your beliefs about saving, giving, debt, or wealth?',
-    options: [
-      {label:'Lots', score:1},
-      {label:'So So', score:2},
-      {label:'Very little', score:3}
-    ]
-  },
-  {
-    id: 18, factor: 'Social Cues',
-    text: 'Would you worry about your child being socially excluded because "all her friends have it"?',
-    options: [
-      {label:'Yes', score:1},
-      {label:'No', score:2}
-    ]
-  },
-  {
-    id: 19, factor: 'Background',
-    text: 'Were there any financial shocks in your childhood that still influence how you react to money today?',
-    options: [
-      {label:'Yes', score:1},
-      {label:'No', score:2}
-    ]
-  },
-  {
-    id: 20, factor: 'Background',
-    text: 'Did you ever feel fear or shame about your family\'s financial situation, even if no one talked about it?',
-    options: [
-      {label:'Yes', score:1},
-      {label:'No', score:2}
-    ]
-  },
-  {
-    id: 21, factor: 'Media',
-    text: 'Watching Dallas or Succession, did the portrayal of wealth feel exciting, corrupting, unrealistic, or strangely familiar?',
-    options: [
-      {label:'Corrupting', score:1},
-      {label:'Unrealistic', score:2},
-      {label:'Strangely Familiar', score:3},
-      {label:'Exciting', score:4}
-    ]
-  },
-  {
-    id: 22, factor: 'Social Cues',
-    text: 'Have you regretted asking the amount a friend or colleague gets paid — what emotion hit you first?',
-    options: [
-      {label:'Glad', score:1},
-      {label:'Content', score:2},
-      {label:'Weary', score:3},
-      {label:'Shame', score:4},
-      {label:'Envy', score:5}
-    ]
-  },
-  {
-    id: 23, factor: 'Media',
-    text: 'Does Location, Location, Location validate Kirstie and Phil as financial advisers?',
-    options: [
-      {label:'Yes', score:1},
-      {label:'No', score:2}
-    ]
-  },
-  {
-    id: 24, factor: 'Social Cues',
-    text: 'Have you ever felt financially dependent on a partner — and what emotions did that dependence create?',
-    options: [
-      {label:'Resignation', score:1},
-      {label:'Cautious', score:2},
-      {label:'Guilt', score:3},
-      {label:'Anxiety', score:4},
-      {label:'Rebellion', score:5}
-    ]
-  },
-  {
-    id: 25, factor: 'Media',
-    text: 'Images of an Ethiopian child with a pot belly and flies were designed to provoke emotion — did you feel guilt, sadness, helplessness, or something else?',
-    options: [
-      {label:'Helpless', score:1},
-      {label:'Sadness', score:2},
-      {label:'Guilt', score:3},
-      {label:'Motivated to Act', score:4}
-    ]
-  },
-  {
-    id: 26, factor: 'Social Cues',
-    text: 'If you\'ve ever heard "I pay the bills, so I do what I want," how did that shape your understanding of power or partnership?',
-    options: [
-      {label:'Repulsed', score:1},
-      {label:'Cautious', score:2},
-      {label:'Resigned', score:3},
-      {label:'Attracted', score:4}
-    ]
-  },
-  {
-    id: 27, factor: 'Media',
-    text: 'Did charity events like Children in Need or Red Nose Day make you feel empowered to help, or overwhelmed?',
-    options: [
-      {label:'Empowered', score:1},
-      {label:'Overwhelmed', score:2}
-    ]
-  },
-  {
-    id: 28, factor: 'Social Cues',
-    text: 'Did you ever feel that your family\'s spending, generosity, or lifestyle lowered or elevated your family\'s honour or respect in the community?',
-    options: [
-      {label:'Lowered', score:1},
-      {label:'Average', score:2},
-      {label:'Elevated', score:3}
-    ]
-  },
-  {
-    id: 29, factor: 'Social Cues',
-    text: 'When you heard phrases like "money doesn\'t grow on trees," what emotions did those words create in you as a child?',
-    options: [
-      {label:'Shame', score:1},
-      {label:'Pride', score:2},
-      {label:'Frustration', score:3},
-      {label:'Excitement', score:4}
-    ]
-  },
-  {
-    id: 30, factor: 'Background',
-    text: 'When you think about your piggy bank, what emotions come up — pride, scarcity, frustration, excitement?',
-    options: [
-      {label:'Shame', score:1},
-      {label:'Pride', score:2},
-      {label:'Frustration', score:3},
-      {label:'Excitement', score:4}
-    ]
-  }
+  // ── SECTION 1: HAIR + SCALP EXPERIENCE ──────────────────────────────────
+  {id:1, type:'radio', section:'Section 1 — Hair + Scalp Experience',
+   text:'Where are you noticing the most change in your hair?',
+   options:[
+    {label:'Crown or top of my head',     scores:{hormonal:5,metabolic:3}},
+    {label:'Hairline or edges',            scores:{mechanical:5,hormonal:3,metabolic:2}},
+    {label:'Thinning all over',            scores:{metabolic:5,hormonal:3,immune:2}},
+    {label:'Patchy or sudden bald spots',  scores:{immune:5,metabolic:4,nervous:3}},
+  ]},
+  {id:2, type:'radio', section:'Section 1 — Hair + Scalp Experience',
+   text:'How did the hair loss begin?',
+   options:[
+    {label:'Suddenly',                              scores:{immune:5,nervous:4,metabolic:2}},
+    {label:'Gradually over time',                  scores:{metabolic:4,hormonal:4,nervous:2}},
+    {label:'After illness, childbirth, or major stress', scores:{nervous:4,immune:4,metabolic:3,hormonal:2}},
+  ]},
+  {id:3, type:'radio', section:'Section 1 — Hair + Scalp Experience',
+   text:'When your hair was coming out, what did you notice most?',
+   options:[
+    {label:'Hair coming out in the shower, brush, or hands', scores:{metabolic:4,immune:3,nervous:2}},
+    {label:'Hair breaking, snapping, or thinning without much shedding', scores:{mechanical:4,metabolic:3}},
+    {label:'Both shedding and breakage',  scores:{metabolic:4,hormonal:3,nervous:2,mechanical:2}},
+  ]},
+  {id:4, type:'radio', section:'Section 1 — Hair + Scalp Experience',
+   text:'How long has this been happening?',
+   options:[
+    {label:'Under 3 months', scores:{nervous:3,immune:2,metabolic:2}},
+    {label:'3 to 12 months', scores:{metabolic:3,hormonal:3,nervous:2}},
+    {label:'Over 1 year',    scores:{metabolic:4,hormonal:3,immune:2,nervous:2}},
+    {label:'Over 2 years',   scores:{metabolic:5,hormonal:4,immune:2,nervous:2}},
+  ]},
+  {id:5, type:'checkbox', section:'Section 1 — Hair + Scalp Experience',
+   text:'What does your scalp feel like?',
+   options:[
+    {label:'Burning or tender',           scores:{immune:4,nervous:3,metabolic:2}},
+    {label:'Itchy',                       scores:{metabolic:3,immune:3}},
+    {label:'Tight or sore without flakes',scores:{nervous:3,mechanical:2,immune:1}},
+    {label:'None',                        scores:{}},
+  ]},
+  {id:6, type:'checkbox', section:'Section 1 — Hair + Scalp Experience',
+   text:'What do you notice about buildup or products?',
+   options:[
+    {label:'Buildup returns quickly',             scores:{metabolic:4,immune:3}},
+    {label:'I oil or grease my scalp weekly or more', scores:{metabolic:3,immune:2}},
+    {label:'My scalp feels clogged or smothered', scores:{metabolic:4,immune:2}},
+    {label:'None',                                scores:{}},
+  ]},
+
+  // ── SECTION 2: STYLING + EXTERNAL STRESS ────────────────────────────────
+  {id:7, type:'radio', section:'Section 2 — Styling + External Stress',
+   text:'How often do you wear tension styles?',
+   options:[
+    {label:'Monthly or more',      scores:{mechanical:5,nervous:2,immune:1}},
+    {label:'Several times per year',scores:{mechanical:4,nervous:1}},
+    {label:'Rarely',               scores:{mechanical:2}},
+    {label:'Never',                scores:{}},
+  ]},
+  {id:8, type:'radio', section:'Section 2 — Styling + External Stress',
+   text:'How long do you usually keep those styles in?',
+   options:[
+    {label:'Over 6 weeks',    scores:{mechanical:5,immune:2}},
+    {label:'3 to 5 weeks',   scores:{mechanical:4}},
+    {label:'Under 2 weeks',  scores:{mechanical:2}},
+    {label:'Not applicable', scores:{}},
+  ]},
+  {id:9, type:'checkbox', section:'Section 2 — Styling + External Stress',
+   text:'After styling, what do you feel?',
+   options:[
+    {label:'Soreness',               scores:{mechanical:4,nervous:2,immune:2}},
+    {label:'Headaches or tightness', scores:{mechanical:3,nervous:3}},
+    {label:'Tender edges',           scores:{mechanical:4,immune:2}},
+    {label:'None',                   scores:{}},
+  ]},
+  {id:10, type:'radio', section:'Section 2 — Styling + External Stress',
+   text:'How often do you use heat tools?',
+   options:[
+    {label:'Weekly or more', scores:{mechanical:4,metabolic:2}},
+    {label:'Monthly',        scores:{mechanical:2}},
+    {label:'Rarely',         scores:{}},
+  ]},
+  {id:11, type:'radio', section:'Section 2 — Styling + External Stress',
+   text:'Chemical service history?',
+   options:[
+    {label:'Within the last year', scores:{mechanical:4,immune:2,metabolic:1}},
+    {label:'In the past',          scores:{mechanical:2}},
+    {label:'Never',                scores:{}},
+  ]},
+
+  // ── SECTION 3: STRESS + NERVOUS SYSTEM ──────────────────────────────────
+  {id:12, type:'checkbox', section:'Section 3 — Stress + Nervous System',
+   text:'On a daily basis, how do you usually feel?',
+   options:[
+    {label:'Tense or overwhelmed', scores:{nervous:5,metabolic:3}},
+    {label:'Hard to relax',        scores:{nervous:5,hormonal:2}},
+    {label:'Tired but wired',      scores:{nervous:5,hormonal:3,metabolic:2}},
+    {label:'None',                 scores:{}},
+  ]},
+  {id:13, type:'checkbox', section:'Section 3 — Stress + Nervous System',
+   text:'Around the time your hair changed, what was happening?',
+   options:[
+    {label:'Pregnancy or postpartum',    scores:{hormonal:5,nervous:3,metabolic:3}},
+    {label:'Menopause or hormone shifts',scores:{hormonal:5,metabolic:3,nervous:2}},
+    {label:'Illness or immune flare',    scores:{immune:5,metabolic:4,nervous:2}},
+    {label:'Surgery or physical trauma', scores:{nervous:4,metabolic:4,immune:2}},
+    {label:'Prolonged emotional stress', scores:{nervous:5,metabolic:3,hormonal:2}},
+    {label:'None',                       scores:{}},
+  ]},
+  {id:14, type:'checkbox', section:'Section 3 — Stress + Nervous System',
+   text:'How has your sleep been?',
+   options:[
+    {label:'Trouble falling asleep',  scores:{nervous:4,hormonal:3}},
+    {label:'Waking overnight',        scores:{nervous:4,hormonal:3}},
+    {label:'Light or restless sleep', scores:{nervous:4,metabolic:2}},
+    {label:'Wake up tired',           scores:{nervous:4,metabolic:3}},
+    {label:'None',                    scores:{}},
+  ]},
+  {id:15, type:'checkbox', section:'Section 3 — Stress + Nervous System',
+   text:'How does caffeine fit into your day?',
+   options:[
+    {label:'Needed to start the day',      scores:{nervous:4,metabolic:3}},
+    {label:'Needed to get through the day',scores:{nervous:4,metabolic:3}},
+    {label:'Makes me anxious or wired',    scores:{nervous:4,hormonal:2}},
+    {label:'Makes me sleepy or drained',   scores:{nervous:4,metabolic:3}},
+    {label:'I do not use caffeine',        scores:{}},
+  ]},
+
+  // ── SECTION 4: METABOLIC + DIGESTIVE ────────────────────────────────────
+  {id:16, type:'checkbox', section:'Section 4 — Metabolic + Digestive',
+   text:'After eating, what do you notice?',
+   options:[
+    {label:'Gas',                   scores:{metabolic:5,immune:2,nervous:2}},
+    {label:'Bloating',              scores:{metabolic:5,immune:3}},
+    {label:'Reflux or heartburn',   scores:{metabolic:5,nervous:3}},
+    {label:'Constipation',          scores:{metabolic:5,hormonal:3}},
+    {label:'Loose stools or urgency',scores:{metabolic:4,immune:3}},
+    {label:'None',                  scores:{}},
+  ]},
+  {id:17, type:'checkbox', section:'Section 4 — Metabolic + Digestive',
+   text:'With meals and timing, what fits?',
+   options:[
+    {label:'Skipping meals makes me feel off',    scores:{metabolic:5,nervous:3,hormonal:2}},
+    {label:'I crash after eating',                scores:{metabolic:5,nervous:3}},
+    {label:'Waiting too long makes me nauseous',  scores:{metabolic:4,nervous:3}},
+    {label:'Low appetite, I force meals',          scores:{metabolic:4,nervous:3}},
+    {label:'None',                                scores:{}},
+  ]},
+  {id:18, type:'checkbox', section:'Section 4 — Metabolic + Digestive',
+   text:'Cravings you notice?',
+   options:[
+    {label:'Sweets or carbs',            scores:{metabolic:4,nervous:3}},
+    {label:'Salty foods',                scores:{metabolic:4,nervous:3}},
+    {label:'Worse during stress',        scores:{nervous:4,metabolic:3}},
+    {label:'Diet helps but hard to sustain', scores:{metabolic:3,nervous:2}},
+    {label:'None',                       scores:{}},
+  ]},
+  {id:19, type:'checkbox', section:'Section 4 — Metabolic + Digestive',
+   text:'On a regular basis, which feel true?',
+   options:[
+    {label:'Dry lips or skin',             scores:{metabolic:5,nervous:2}},
+    {label:'Drinking fluids but still off',scores:{metabolic:4,nervous:2}},
+    {label:'Dark urine often',             scores:{metabolic:5}},
+    {label:'None',                         scores:{}},
+  ]},
+
+  // ── SECTION 5: IMMUNE + HORMONAL LOAD ───────────────────────────────────
+  {id:20, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Do you deal with any of the following?',
+   options:[
+    {label:'Allergies',        scores:{immune:4,metabolic:4}},
+    {label:'Chronic congestion',scores:{immune:4,metabolic:4}},
+    {label:'Rashes or eczema', scores:{immune:4,metabolic:3}},
+    {label:'None',             scores:{}},
+  ]},
+  {id:21, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'When you get sick, what happens?',
+   options:[
+    {label:'I get sick often',       scores:{immune:4,metabolic:3}},
+    {label:'Recovery takes a while', scores:{immune:4,metabolic:3,nervous:2}},
+    {label:'Recurring infections',   scores:{immune:4,metabolic:4}},
+    {label:'None',                   scores:{}},
+  ]},
+  {id:22, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'What does your body experience?',
+   options:[
+    {label:'Aches or pains',      scores:{immune:3,metabolic:3,nervous:2}},
+    {label:'Swelling or puffiness',scores:{immune:3,metabolic:3,hormonal:2}},
+    {label:'Tender lymph nodes',   scores:{immune:4,metabolic:3}},
+    {label:'None',                 scores:{}},
+  ]},
+  {id:23, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Menstrual cycle experiences?',
+   options:[
+    {label:'Heavy cycles',    scores:{hormonal:5,metabolic:4}},
+    {label:'Painful cycles',  scores:{hormonal:4,metabolic:3}},
+    {label:'Irregular cycles',scores:{hormonal:5,nervous:2,metabolic:2}},
+    {label:'PMS mood shifts', scores:{hormonal:4,nervous:3}},
+    {label:'Not applicable',  scores:{}},
+  ]},
+  {id:24, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Have you noticed hair changes during hormone shifts?',
+   options:[
+    {label:'Childbirth',                 scores:{hormonal:5,nervous:3,metabolic:3}},
+    {label:'Menopause or perimenopause', scores:{hormonal:5,metabolic:3,nervous:2}},
+    {label:'Stopping birth control',     scores:{hormonal:5,metabolic:3}},
+    {label:'None',                       scores:{}},
+  ]},
+  {id:25, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Skin or hair signs you notice?',
+   options:[
+    {label:'Jawline acne',       scores:{hormonal:4,metabolic:2}},
+    {label:'Facial hair growth', scores:{hormonal:4,metabolic:2}},
+    {label:'Oily clogged scalp', scores:{metabolic:3,hormonal:3,immune:2}},
+    {label:'None',               scores:{}},
+  ]},
+  {id:26, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Iron related experiences?',
+   options:[
+    {label:'Low iron or ferritin', scores:{metabolic:5,hormonal:3,immune:2}},
+    {label:'Anemia',               scores:{metabolic:5,hormonal:3,immune:2}},
+    {label:'Shortness of breath',  scores:{metabolic:4,nervous:2}},
+    {label:'Ice cravings',         scores:{metabolic:5}},
+    {label:'None',                 scores:{}},
+  ]},
+  {id:27, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Vitamin D experiences?',
+   options:[
+    {label:'Deficiency',        scores:{metabolic:4,immune:4}},
+    {label:'Rare sun exposure', scores:{metabolic:3,immune:3}},
+    {label:'None',              scores:{}},
+  ]},
+  {id:28, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Nails or healing changes?',
+   options:[
+    {label:'Slow healing',      scores:{metabolic:4,immune:3}},
+    {label:'Weak nails',        scores:{metabolic:4}},
+    {label:'Low protein intake',scores:{metabolic:4,hormonal:2}},
+    {label:'None',              scores:{}},
+  ]},
+  {id:29, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Temperature or energy changes?',
+   options:[
+    {label:'Cold often',               scores:{metabolic:4,hormonal:4}},
+    {label:'Fatigue with constipation',scores:{metabolic:4,hormonal:3}},
+    {label:'Dry skin',                 scores:{metabolic:3,hormonal:2}},
+    {label:'None',                     scores:{}},
+  ]},
+  {id:30, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Autoimmune background?',
+   options:[
+    {label:'Personal diagnosis', scores:{immune:5,metabolic:4,nervous:2}},
+    {label:'Family history',     scores:{immune:4,metabolic:3}},
+    {label:'None',               scores:{}},
+  ]},
+  {id:31, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Product sensitivity?',
+   options:[
+    {label:'React easily',           scores:{immune:3,metabolic:3,nervous:2}},
+    {label:'Itching without dryness',scores:{immune:3,metabolic:3}},
+    {label:'None',                   scores:{}},
+  ]},
+  {id:32, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Do you struggle with weight changes?',
+   options:[
+    {label:'Hard to lose weight',       scores:{metabolic:4,hormonal:3}},
+    {label:'Unintentional weight gain', scores:{metabolic:4,hormonal:3}},
+    {label:'Unintentional weight loss', scores:{metabolic:3,nervous:2}},
+    {label:'None',                      scores:{}},
+  ]},
+  {id:33, type:'checkbox', section:'Section 5 — Immune + Hormonal Load',
+   text:'Blood sugar related feelings?',
+   options:[
+    {label:'Energy crashes',          scores:{metabolic:4,nervous:3}},
+    {label:'Shakiness between meals', scores:{metabolic:4,nervous:3}},
+    {label:'None',                    scores:{}},
+  ]},
+  {id:34, type:'radio', section:'Section 5 — Immune + Hormonal Load',
+   text:'Have you been diagnosed with diabetes, prediabetes, or insulin resistance?',
+   options:[
+    {label:'Yes',               scores:{metabolic:5,hormonal:3}},
+    {label:'Told I am borderline',scores:{metabolic:4,hormonal:2}},
+    {label:'No',                scores:{}},
+  ]},
+  {id:35, type:'radio', section:'Section 5 — Immune + Hormonal Load',
+   text:'Do you feel like your body has been giving you signals long before the hair changes?',
+   options:[
+    {label:'Yes, for a long time',                   scores:{nervous:3,metabolic:3,immune:2}},
+    {label:'Some signs, but I did not connect them', scores:{metabolic:3,nervous:2}},
+    {label:'No',                                     scores:{}},
+  ]},
 ];
 
-const ARCHETYPES = [
-  { min:0,  max:20,  name:'Security-Anchored Saver',   desc:'Safety and predictability drive most of your financial decisions. Stability is your foundation.' },
-  { min:21, max:40,  name:'Cautious Stabiliser',        desc:'You prefer security but allow yourself selective indulgences. Comfort matters, but caution leads.' },
-  { min:41, max:60,  name:'Emotionally Split',           desc:'You sit at the crossroads of safety and enjoyment — pulled in both directions with equal force.' },
-  { min:61, max:80,  name:'Aspirational Spender',        desc:'You seek identity and experiences through spending. Life feels fuller when shared and expressed.' },
-  { min:81, max:100, name:'Emotion-Driven Spender',      desc:'Your spending is strongly tied to emotion, status, or relief. Feelings guide your financial flow.' }
-];
+// Category metadata
+const CATEGORIES = {
+  nervous:   { name:'Nervous System',      desc:'Your nervous system is showing signs of sustained stress or dysregulation. Chronic stress directly disrupts the hair growth cycle through cortisol and inflammation.' },
+  metabolic: { name:'Metabolic / Digestive', desc:'Your metabolic and digestive function appears to be under load. Nutrient absorption, blood sugar regulation, and gut health are foundational to hair growth.' },
+  immune:    { name:'Immune / Inflammatory', desc:'Immune activity or low-grade inflammation may be influencing your hair and scalp. The immune system plays a direct role in follicle health and hair cycling.' },
+  hormonal:  { name:'Hormonal / Endocrine', desc:'Hormonal patterns — including estrogen, androgens, and thyroid function — appear to be contributing factors. Hormone balance is tightly linked to hair density and shedding cycles.' },
+  mechanical:{ name:'Mechanical / External', desc:'Physical stressors from styling, tension, heat, or chemical services are likely contributing to hair and scalp disruption.' },
+};
 
-const WEIGHTS = { 'Background': 0.50, 'Social Cues': 0.30, 'Media': 0.20 };
+// ── STATE ──────────────────────────────────────────────────────────────────
+let currentIndex = 0;
+let answers = {};     // { qId: Set of selectedOptionIndices }  for checkbox
+                      // { qId: selectedOptionIndex }           for radio
+let userName = '';
 
-// ─── STATE ───
-let currentQ = 0;
-let answers = {};
-let timerInterval = null;
-let timeLeft = 20;
-const TIMER_MAX = 20;
-const CIRCUMFERENCE = 2 * Math.PI * 22;
-
-// ─── SCREENS ───
+// ── SCREEN HELPERS ─────────────────────────────────────────────────────────
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-// ─── COUNTDOWN ───
-function startCountdown() {
-  const overlay = document.getElementById('countdown-overlay');
-  const num = document.getElementById('countdown-num');
-  overlay.classList.remove('hidden');
-  let c = 3;
-  num.textContent = c;
-  const interval = setInterval(() => {
-    c--;
-    if (c === 0) {
-      clearInterval(interval);
-      overlay.classList.add('hidden');
-      currentQ = 0;
-      answers = {};
-      showScreen('question-screen');
-      renderQuestion(currentQ);
-    } else {
-      num.textContent = c;
-    }
-  }, 900);
+// ── START ──────────────────────────────────────────────────────────────────
+function startAudit() {
+  userName = document.getElementById('user-name').value.trim();
+  currentIndex = 0;
+  answers = {};
+  showScreen('quiz-screen');
+  renderQuestion(0);
 }
 
-// ─── RENDER QUESTION ───
+// ── RENDER QUESTION ────────────────────────────────────────────────────────
 function renderQuestion(index) {
   const q = QUESTIONS[index];
+  const card = document.getElementById('q-card');
 
-  // Animate in
-  const content = document.getElementById('q-content');
-  content.classList.remove('slide-in');
-  void content.offsetWidth;
-  content.classList.add('slide-in');
+  // Animate
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
 
-  document.getElementById('q-num').textContent = index + 1;
-  document.getElementById('progress-fill').style.width = ((index / 30) * 100) + '%';
-  document.getElementById('factor-badge').textContent = q.factor;
-  document.getElementById('q-number-label').textContent = 'Question ' + String(index + 1).padStart(2, '0');
-  document.getElementById('q-question').textContent = q.text;
+  // Progress
+  const pct = (index / QUESTIONS.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = (index + 1) + ' of ' + QUESTIONS.length;
+  document.getElementById('section-chip').textContent = q.section;
 
-  const grid = document.getElementById('options-grid');
-  const n = q.options.length;
-  grid.className = 'options-grid cols-' + n;
-  grid.innerHTML = '';
+  // Back button
+  document.getElementById('btn-back').style.visibility = index === 0 ? 'hidden' : 'visible';
 
-  q.options.forEach(function(opt) {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = opt.label;
-    btn.setAttribute('aria-label', opt.label);
-    btn.onclick = function() { selectOption(q.id, opt.score, btn); };
-    grid.appendChild(btn);
-  });
+  // Nav hint
+  const hint = document.getElementById('q-nav-hint');
+  hint.textContent = q.type === 'checkbox' ? 'Select all that apply' : 'Select one';
 
-  startTimer();
-}
+  // Build card HTML
+  const typeLabel = q.type === 'checkbox' ? 'Select all that apply' : 'Select one';
+  let optionsHTML = '';
+  const currentAnswers = answers[q.id];
 
-// ─── SELECT OPTION ───
-function selectOption(qId, score, btn) {
-  document.querySelectorAll('#options-grid .option-btn').forEach(function(b) {
-    b.classList.remove('selected');
-  });
-  btn.classList.add('selected');
-  answers[qId] = score;
-  setTimeout(advanceQuestion, 380);
-}
-
-function skipQuestion() {
-  advanceQuestion();
-}
-
-// ─── ADVANCE ───
-function advanceQuestion() {
-  stopTimer();
-  currentQ++;
-  if (currentQ >= QUESTIONS.length) {
-    showLoading();
-  } else {
-    renderQuestion(currentQ);
-  }
-}
-
-// ─── LOADING ───
-function showLoading() {
-  showScreen('loading-screen');
-  setTimeout(calcAndShowResults, 2200);
-}
-
-// ─── TIMER ───
-function startTimer() {
-  stopTimer();
-  timeLeft = TIMER_MAX;
-  updateTimerDisplay();
-  timerInterval = setInterval(function() {
-    timeLeft--;
-    updateTimerDisplay();
-    if (timeLeft <= 0) {
-      stopTimer();
-      var numEl = document.getElementById('timer-num');
-      numEl.parentElement.classList.add('timeout-flash');
-      setTimeout(function() {
-        numEl.parentElement.classList.remove('timeout-flash');
-        advanceQuestion();
-      }, 1200);
+  q.options.forEach((opt, i) => {
+    let isSelected = false;
+    if (q.type === 'radio') {
+      isSelected = currentAnswers === i;
+    } else {
+      isSelected = currentAnswers instanceof Set && currentAnswers.has(i);
     }
-  }, 1000);
+    const selClass = isSelected ? ' selected' : '';
+    optionsHTML += `
+      <button class="opt-btn ${q.type}${selClass}" onclick="selectOption(${index}, ${i}, this)">
+        <span class="opt-indicator"></span>
+        <span>${opt.label}</span>
+      </button>`;
+  });
+
+  card.innerHTML = `
+    <div class="q-num">Question ${index + 1}</div>
+    <div class="q-text">${q.text}</div>
+    <span class="q-type-badge">${typeLabel}</span>
+    <div class="options-list">${optionsHTML}</div>
+  `;
+
+  // Next button label
+  document.getElementById('btn-next').textContent = index === QUESTIONS.length - 1 ? 'See My Results →' : 'Next →';
 }
 
-function stopTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
-}
+// ── SELECT OPTION ──────────────────────────────────────────────────────────
+function selectOption(qIndex, optIndex, btn) {
+  const q = QUESTIONS[qIndex];
+  const card = document.getElementById('q-card');
 
-function updateTimerDisplay() {
-  const numEl = document.getElementById('timer-num');
-  const fillEl = document.getElementById('timer-fill');
-  numEl.textContent = timeLeft;
-  const fraction = timeLeft / TIMER_MAX;
-  const offset = CIRCUMFERENCE * (1 - fraction);
-  fillEl.style.strokeDashoffset = offset;
-  if (timeLeft <= 5) {
-    fillEl.style.stroke = '#ff3a3a';
-    numEl.style.color = '#ff3a3a';
-  } else if (timeLeft <= 10) {
-    fillEl.style.stroke = '#ffaa20';
-    numEl.style.color = '#ffaa20';
+  if (q.type === 'radio') {
+    // Exactly one selection — deselect all others first
+    answers[q.id] = optIndex;
+    card.querySelectorAll('.opt-btn').forEach((b, i) => {
+      b.classList.toggle('selected', i === optIndex);
+    });
+    // Auto-advance after short delay for radio
+    setTimeout(goNext, 320);
+
   } else {
-    fillEl.style.stroke = 'var(--burnt-orange)';
-    numEl.style.color = 'var(--white)';
+    // Checkbox — toggle this option; "None" clears all others
+    if (!answers[q.id]) answers[q.id] = new Set();
+    const set = answers[q.id];
+    const isNone = q.options[optIndex].label.toLowerCase() === 'none' ||
+                   q.options[optIndex].label.toLowerCase() === 'not applicable' ||
+                   q.options[optIndex].label.toLowerCase() === 'i do not use caffeine';
+
+    if (isNone) {
+      // Selecting None/NA clears everything else, toggles None itself
+      if (set.has(optIndex)) {
+        set.delete(optIndex);
+      } else {
+        set.clear();
+        set.add(optIndex);
+      }
+    } else {
+      // Selecting a real option clears any None/NA
+      if (set.has(optIndex)) {
+        set.delete(optIndex);
+      } else {
+        // Clear any None/NA options
+        q.options.forEach((o, i) => {
+          const lbl = o.label.toLowerCase();
+          if (lbl === 'none' || lbl === 'not applicable' || lbl === 'i do not use caffeine') {
+            set.delete(i);
+          }
+        });
+        set.add(optIndex);
+      }
+    }
+    // Re-render selections
+    card.querySelectorAll('.opt-btn').forEach((b, i) => {
+      b.classList.toggle('selected', set.has(i));
+    });
   }
 }
 
-// ─── SCORING ───
-function calcAndShowResults() {
-  const factors = { 'Background': [], 'Social Cues': [], 'Media': [] };
-  QUESTIONS.forEach(function(q) { factors[q.factor].push(q); });
-
-  const factorScores = {};
-  Object.keys(factors).forEach(function(factor) {
-    const qs = factors[factor];
-    let sum = 0;
-    // Per spec: divide by total questions in factor (not just answered).
-    // Skipped questions contribute 0 (normalised), pulling toward the low end.
-    qs.forEach(function(q) {
-      const raw = answers[q.id];
-      if (raw !== undefined) {
-        const ki = q.options.length;
-        // Normalise: n_i = (x_i - 1) / (k_i - 1)  → range 0–1
-        sum += (raw - 1) / (ki - 1);
-      }
-      // Unanswered/skipped: contribute 0 to sum (already the default)
-    });
-    // Score_F = (1/totalQuestionsInFactor) × sum × 100
-    factorScores[factor] = (sum / qs.length) * 100;
-  });
-
-  const overall = Math.round(
-    factorScores['Background'] * WEIGHTS['Background'] +
-    factorScores['Social Cues'] * WEIGHTS['Social Cues'] +
-    factorScores['Media'] * WEIGHTS['Media']
-  );
-
-  const archetype = ARCHETYPES.find(function(a) { return overall >= a.min && overall <= a.max; }) || ARCHETYPES[2];
-  showResults(overall, factorScores, archetype);
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function goNext() {
+  if (currentIndex === QUESTIONS.length - 1) {
+    showScreen('loading-screen');
+    setTimeout(calcResults, 1800);
+  } else {
+    currentIndex++;
+    renderQuestion(currentIndex);
+  }
 }
 
-// ─── SHOW RESULTS ───
-function showResults(overall, factorScores, archetype) {
+function goBack() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion(currentIndex);
+  }
+}
+
+// ── SCORING ────────────────────────────────────────────────────────────────
+// THIS IS THE CRITICAL FIX vs the Jotform approach:
+// We iterate each question, look at EXACTLY what was selected,
+// and add ONLY the scores explicitly assigned to that option.
+// Nothing fires unless its specific option was chosen.
+
+function calcResults() {
+  const totals = { nervous:0, metabolic:0, immune:0, hormonal:0, mechanical:0 };
+
+  QUESTIONS.forEach(q => {
+    const answer = answers[q.id];
+
+    if (q.type === 'radio') {
+      // Radio: single index or undefined
+      if (answer !== undefined) {
+        const opt = q.options[answer];
+        // Add ONLY the scores defined for THIS option
+        Object.entries(opt.scores).forEach(([cat, val]) => {
+          totals[cat] += val;
+        });
+      }
+
+    } else {
+      // Checkbox: Set of selected indices
+      if (answer instanceof Set) {
+        answer.forEach(optIndex => {
+          const opt = q.options[optIndex];
+          // "None"/"Not applicable" options have scores:{} — so nothing added
+          Object.entries(opt.scores).forEach(([cat, val]) => {
+            totals[cat] += val;
+          });
+        });
+      }
+    }
+  });
+
+  showResults(totals);
+}
+
+// ── RESULTS ────────────────────────────────────────────────────────────────
+function showResults(totals) {
+  // Sort categories highest to lowest
+  const sorted = Object.entries(totals)
+    .sort((a, b) => b[1] - a[1]);
+
+  const maxScore = sorted[0][1] || 1; // avoid divide by zero
+
+  // Greeting
+  const greet = userName
+    ? `Here is your personalised Hair Health Snapshot, ${userName}. Based on your responses, these are the body systems most likely contributing to your hair concerns.`
+    : 'Based on your responses, these are the body systems most likely contributing to your hair concerns.';
+  document.getElementById('results-greeting').textContent = greet;
+
+  // Primary driver
+  const [primaryCat, primaryScore] = sorted[0];
+  const primaryMeta = CATEGORIES[primaryCat];
+  document.getElementById('primary-name').textContent = primaryMeta.name;
+  document.getElementById('primary-desc').textContent = primaryMeta.desc;
+
+  // Secondary driver
+  const [secondaryCat, secondaryScore] = sorted[1];
+  const secondaryMeta = CATEGORIES[secondaryCat];
+  document.getElementById('secondary-name').textContent = secondaryMeta.name;
+  document.getElementById('secondary-desc').textContent = secondaryMeta.desc;
+
+  // Supporting contributors (3rd–5th, only if score > 0)
+  const supporters = sorted.slice(2).filter(([,s]) => s > 0);
+  const supContainer = document.getElementById('supporting-cards');
+  document.getElementById('supporting-section').style.display = supporters.length ? 'block' : 'none';
+  supContainer.innerHTML = '';
+  supporters.forEach(([cat, score]) => {
+    const meta = CATEGORIES[cat];
+    const pct = Math.round((score / maxScore) * 100);
+    supContainer.innerHTML += `
+      <div class="driver-card supporting">
+        <div class="driver-badge">Supporting Contributor</div>
+        <div class="driver-name">${meta.name}</div>
+        <div class="driver-desc">${meta.desc}</div>
+        <div class="driver-score-bar"><div class="driver-score-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  // Breakdown bars
+  const breakdownEl = document.getElementById('breakdown-rows');
+  breakdownEl.innerHTML = '';
+  sorted.forEach(([cat, score]) => {
+    const meta = CATEGORIES[cat];
+    const pct = Math.round((score / maxScore) * 100);
+    breakdownEl.innerHTML += `
+      <div class="breakdown-row">
+        <div class="breakdown-name">${meta.name}</div>
+        <div class="breakdown-track"><div class="breakdown-fill" data-pct="${pct}"></div></div>
+        <div class="breakdown-val">${score}</div>
+      </div>`;
+  });
+
   showScreen('results-screen');
 
-  // Archetype name — italicise last two words
-  const words = archetype.name.split(' ');
-  const plain = words.slice(0, -2).join(' ');
-  const italic = words.slice(-2).join(' ');
-  document.getElementById('archetype-name').innerHTML =
-    (plain ? plain + ' ' : '') + '<em>' + italic + '</em>';
-
-  document.getElementById('archetype-desc').textContent = archetype.desc;
-
-  animateCounter('overall-score', 0, overall, 1400);
-  setTimeout(function() {
-    document.getElementById('overall-bar').style.width = overall + '%';
-  }, 300);
-
-  const bgScore = Math.round(factorScores['Background']);
-  const scScore = Math.round(factorScores['Social Cues']);
-  const mdScore = Math.round(factorScores['Media']);
-
-  setTimeout(function() {
-    animateCounter('bg-score', 0, bgScore, 1200);
-    animateCounter('sc-score', 0, scScore, 1200);
-    animateCounter('md-score', 0, mdScore, 1200);
-    document.getElementById('bg-bar').style.width = bgScore + '%';
-    document.getElementById('sc-bar').style.width = scScore + '%';
-    document.getElementById('md-bar').style.width = mdScore + '%';
-    document.getElementById('card-background').classList.add('animate');
-    document.getElementById('card-social').classList.add('animate');
-    document.getElementById('card-media').classList.add('animate');
-  }, 500);
-
-  // Archetype table
-  const tbody = document.querySelector('#archetype-table tbody');
-  tbody.innerHTML = '';
-  ARCHETYPES.forEach(function(a) {
-    const tr = document.createElement('tr');
-    if (overall >= a.min && overall <= a.max) tr.className = 'current';
-    tr.innerHTML = '<td>' + a.min + '–' + a.max + '</td><td>' + a.name + '</td><td>' + a.desc + '</td>';
-    tbody.appendChild(tr);
+  // Animate bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      // Primary/secondary bars
+      document.getElementById('primary-bar').style.width =
+        Math.round((primaryScore / maxScore) * 100) + '%';
+      document.getElementById('secondary-bar').style.width =
+        Math.round((secondaryScore / maxScore) * 100) + '%';
+      // Breakdown + supporting bars
+      document.querySelectorAll('.breakdown-fill, .driver-score-fill').forEach(el => {
+        if (el.dataset.pct) el.style.width = el.dataset.pct + '%';
+      });
+    }, 100);
   });
 }
 
-function animateCounter(id, from, to, duration) {
-  const el = document.getElementById(id);
-  const start = performance.now();
-  function step(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(from + (to - from) * ease);
-    if (progress < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-function restartAssessment() {
-  currentQ = 0;
+// ── RETAKE ─────────────────────────────────────────────────────────────────
+function retake() {
   answers = {};
-  startCountdown();
+  currentIndex = 0;
+  showScreen('disclaimer-screen');
 }
 </script>
 </body>
